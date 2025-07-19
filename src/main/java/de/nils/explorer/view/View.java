@@ -1,6 +1,7 @@
 package de.nils.explorer.view;
 
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.nio.file.Paths;
@@ -8,6 +9,7 @@ import java.nio.file.Paths;
 public class View
 {
     private final JTable table;
+    private final JLabel elementsLabel;
 
     public View()
     {
@@ -16,19 +18,38 @@ public class View
         frame.setIconImage(new ImageIcon(Paths.get(".", "src", "main", "resources", "icons", "256-explorer.png").toString()).getImage());
         frame.setLayout(new BorderLayout());
 
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.add(new JButton("Hello world"));
-        panel.add(new JButton("Hello World"));
+        JPanel mainPanel = new JPanel();
+        mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
 
-        frame.add(panel, BorderLayout.NORTH);
+        JPanel upperPanel = new JPanel();
+        upperPanel.setLayout(new BoxLayout(upperPanel, BoxLayout.LINE_AXIS));
+
+        upperPanel.add(new JButton("Back"));
+        upperPanel.add(Box.createHorizontalStrut(5));
+        upperPanel.add(new JButton("Root"));
+        upperPanel.add(Box.createHorizontalGlue());
+
+        JPanel lowerPanel = new JPanel();
+        lowerPanel.setLayout(new BoxLayout(lowerPanel, BoxLayout.LINE_AXIS));
+
+        lowerPanel.add(new JButton("Test1"));
+        lowerPanel.add(new JButton("Test2"));
+        lowerPanel.add(Box.createHorizontalGlue());
+
+        mainPanel.add(upperPanel);
+        mainPanel.add(lowerPanel);
+
+        frame.add(mainPanel, BorderLayout.NORTH);
 
         JMenu list = new JMenu("List");
         list.add("Test1");
         list.add("Test2");
 
         frame.add(list, BorderLayout.WEST);
-        frame.add(new JButton("Hello world"), BorderLayout.SOUTH);
+
+        elementsLabel = new JLabel("{} Elements");
+        elementsLabel.setBorder(new EmptyBorder(2, 5, 2, 0));
+        frame.add(elementsLabel, BorderLayout.SOUTH);
 
         String[] columnNames = { "Name", "Date modified", "Type", "Size"};
 
@@ -54,5 +75,10 @@ public class View
     public JTable getTable()
     {
         return table;
+    }
+
+    public JLabel getElementsLabel()
+    {
+        return elementsLabel;
     }
 }

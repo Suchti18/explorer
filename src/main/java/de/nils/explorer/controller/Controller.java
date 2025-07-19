@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
 public class Controller
@@ -71,14 +72,17 @@ public class Controller
         // Clear table
         ((DefaultTableModel) view.getTable().getModel()).setRowCount(0);
 
+        AtomicInteger count = new AtomicInteger();
+
         try(Stream<Path> files = Files.list(currPath)) {
             files.forEach(path ->
             {
                 if(Files.exists(path))
                 {
                     try {
-                        String[] data = {path.getFileName().toString(), Files.getLastModifiedTime(path).toString(), Files.isDirectory(path) ? "Directory" : "File", String.valueOf(Files.size(path)) + " Bytes"};
+                        String[] data = {path.getFileName().toString(), Files.getLastModifiedTime(path).toString(), Files.isDirectory(path) ? "Directory" : "File", Files.size(path) + " Bytes"};
                         ((DefaultTableModel) view.getTable().getModel()).addRow(data);
+                        count.getAndIncrement();
                     } catch (IOException e) {
                         throw new RuntimeException(e);
                     }
@@ -87,5 +91,7 @@ public class Controller
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
+        view.getElementsLabel().setText(count.get() + " Elements");
     }
 }
