@@ -92,6 +92,9 @@ public class Controller
             throw new RuntimeException(e);
         }
 
+        // Update element count
         view.getElementsLabel().setText(count.get() + " Elements");
+        // Update path label
+        view.getPathLabel().setText(currPath.toAbsolutePath().normalize().toString());
     }
 }
