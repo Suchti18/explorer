@@ -15,6 +15,7 @@ public class View
 {
     private final JTable table;
     private final JLabel elementsLabel;
+    private final JLabel pathLabel;
 
     public View()
     {
@@ -64,6 +65,8 @@ public class View
             throw new RuntimeException(e);
         }
 
+        pathLabel = new JLabel();
+
         upperPanel.add(backBtn);
         upperPanel.add(Box.createHorizontalStrut(5));
         upperPanel.add(nextBtn);
@@ -71,6 +74,8 @@ public class View
         upperPanel.add(topBtn);
         upperPanel.add(Box.createHorizontalStrut(5));
         upperPanel.add(refreshBtn);
+        upperPanel.add(Box.createHorizontalStrut(5));
+        upperPanel.add(pathLabel);
         upperPanel.add(Box.createHorizontalGlue());
 
         JPanel lowerPanel = new JPanel();
@@ -124,5 +129,10 @@ public class View
     public JLabel getElementsLabel()
     {
         return elementsLabel;
+    }
+
+    public JLabel getPathLabel()
+    {
+        return pathLabel;
     }
 }
