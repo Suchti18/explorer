@@ -7,6 +7,8 @@ import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -17,6 +19,11 @@ public class View
     private final JTable table;
     private final JLabel elementsLabel;
     private final JLabel pathLabel;
+
+    private final JButton backBtn;
+    private final JButton nextBtn;
+    private final JButton topBtn;
+    private final JButton refreshBtn;
 
     public View()
     {
@@ -42,40 +49,23 @@ public class View
 
         JPanel upperPanel = new JPanel();
         upperPanel.setLayout(new BoxLayout(upperPanel, BoxLayout.LINE_AXIS));
+        upperPanel.setBorder(new EmptyBorder(5, 8, 5, 5));
 
-        JButton backBtn = new JButton();
-        JButton nextBtn = new JButton();
-        JButton topBtn = new JButton();
-        JButton refreshBtn = new JButton();
-        try
-        {
-            FlatSVGIcon svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/left.svg"));
-            backBtn.setIcon(new ImageIcon(svg.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
-
-            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/right.svg"));
-            nextBtn.setIcon(new ImageIcon(svg.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
-
-            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/top.svg"));
-            topBtn.setIcon(new ImageIcon(svg.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
-
-            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/refresh.svg"));
-            refreshBtn.setIcon(new ImageIcon(svg.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
+        backBtn = createMenuBtn("/images/left.svg", 24, 24);
+        nextBtn = createMenuBtn("/images/right.svg", 24, 24);
+        topBtn = createMenuBtn("/images/top.svg", 24, 24);
+        refreshBtn = createMenuBtn("/images/refresh.svg", 24, 24);
 
         pathLabel = new JLabel();
 
         upperPanel.add(backBtn);
-        upperPanel.add(Box.createHorizontalStrut(5));
+        upperPanel.add(Box.createHorizontalStrut(10));
         upperPanel.add(nextBtn);
-        upperPanel.add(Box.createHorizontalStrut(5));
+        upperPanel.add(Box.createHorizontalStrut(10));
         upperPanel.add(topBtn);
-        upperPanel.add(Box.createHorizontalStrut(5));
+        upperPanel.add(Box.createHorizontalStrut(10));
         upperPanel.add(refreshBtn);
-        upperPanel.add(Box.createHorizontalStrut(5));
+        upperPanel.add(Box.createHorizontalStrut(10));
         upperPanel.add(pathLabel);
         upperPanel.add(Box.createHorizontalGlue());
 
@@ -137,5 +127,67 @@ public class View
     public JLabel getPathLabel()
     {
         return pathLabel;
+    }
+
+    public JButton getBackBtn()
+    {
+        return backBtn;
+    }
+
+    public JButton getNextBtn()
+    {
+        return nextBtn;
+    }
+
+    public JButton getTopBtn()
+    {
+        return topBtn;
+    }
+
+    public JButton getRefreshBtn()
+    {
+        return refreshBtn;
+    }
+
+    private JButton createMenuBtn(String resourceName, int width, int height)
+    {
+        try
+        {
+            FlatSVGIcon svg = new FlatSVGIcon(getClass().getResourceAsStream(resourceName));
+            JButton btn = new JButton();
+            btn.setIcon(new ImageIcon(svg.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH)));
+            btn.setFocusPainted(false);
+            btn.setBorderPainted(false);
+            btn.setOpaque(false);
+            btn.setBackground(Color.lightGray);
+            btn.setPreferredSize(new Dimension(width + 5, height + 5));
+            btn.addMouseListener(new MouseAdapter() {
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param e
+                 */
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    btn.setOpaque(true);
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param e
+                 */
+                @Override
+                public void mouseExited(MouseEvent e) {
+                    btn.setOpaque(false);
+                }
+            });
+
+            return btn;
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }
