@@ -2,6 +2,7 @@ package de.nils.explorer.view;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import de.nils.explorer.view.components.FileNameTableCellRenderer;
+import de.nils.explorer.view.components.ListDragListener;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -106,12 +107,26 @@ public class View
         JPanel sideNavBar = new JPanel();
         sideNavBar.setLayout(new BoxLayout(sideNavBar, BoxLayout.LINE_AXIS));
 
-        JMenu list = new JMenu("List");
-        list.add("Test1");
-        list.add("Test2");
+        JPanel sideBar =  new JPanel();
+        sideBar.setLayout(new BoxLayout(sideBar, BoxLayout.PAGE_AXIS));
+
+        for(int i = 1; i < 50; i++)
+        {
+            sideBar.add(new JLabel("Test"));
+        }
+
+        JScrollPane list = new JScrollPane(sideBar);
+        list.setPreferredSize(new Dimension(175, 100));
+        list.setBorder(new EmptyBorder(0, 5, 0, 0));
+
+        JSeparator sideBarSeparator = createSeparator(JSeparator.VERTICAL, Color.black, 0);
+
+        ListDragListener listDragListener = new ListDragListener(list, frame, sideBarSeparator);
+        sideBarSeparator.addMouseListener(listDragListener);
+        sideBarSeparator.addMouseMotionListener(listDragListener);
 
         sideNavBar.add(list);
-        sideNavBar.add(createSeparator(JSeparator.VERTICAL, Color.black, 0));
+        sideNavBar.add(sideBarSeparator);
 
         frame.add(sideNavBar, BorderLayout.WEST);
 
