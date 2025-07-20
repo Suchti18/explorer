@@ -12,6 +12,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -112,7 +115,13 @@ public class Controller
                             type = "File";
                         }
 
-                        Object[] data = {new FileName(img, path.getFileName().toString()), Files.getLastModifiedTime(path).toString(), type, Files.size(path) + " Bytes"};
+                        String modifiedDate = LocalDateTime.ofInstant(
+                                Files.getLastModifiedTime(path).toInstant(),
+                                ZonedDateTime.now().getZone()).format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+
+                        String fileSize = Files.size(path) + " Bytes";
+
+                        Object[] data = {new FileName(img, path.getFileName().toString()), modifiedDate, type, fileSize};
                         ((DefaultTableModel) view.getTable().getModel()).addRow(data);
                         count.getAndIncrement();
                     }
@@ -122,7 +131,9 @@ public class Controller
                     }
                 }
             });
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             throw new RuntimeException(e);
         }
 

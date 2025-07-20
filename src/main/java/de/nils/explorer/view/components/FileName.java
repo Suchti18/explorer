@@ -22,4 +22,10 @@ public class FileName
     {
         return image;
     }
+
+    @Override
+    public String toString()
+    {
+        return fileName;
+    }
 }
