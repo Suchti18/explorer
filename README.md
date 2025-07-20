@@ -1,6 +1,18 @@
-# explorer
+# 📂 explorer
 Windows 10 Explorer for Windows XP
 
-## Java for Windows XP
-Download "jre-8u51-windows-i586.exe" to run the app on Windows xp:
+## Usage
+
+Run the explorer executable
+
+### Requirements
+
+- Java 8 for Windows XP
+
+### Java 8 for Windows XP
+Download "jre-8u51-windows-i586.exe" to run the app on Windows XP:
 https://archive.org/download/Java_8_update_51
+
+## 📜 License
+
+[Unlicense](https://unlicense.org)
