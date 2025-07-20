@@ -42,7 +42,7 @@ public class Controller
         }
 
         this.view = view;
-        currPath = Paths.get(".");
+        currPath = Paths.get(".").toAbsolutePath().normalize();
 
         listDirectoryContent();
 
@@ -84,6 +84,35 @@ public class Controller
                         }
                     }
                 }
+            }
+        });
+
+        view.getBackBtn().addMouseListener(new MouseAdapter()
+        {
+            /**
+             * {@inheritDoc}
+             *
+             * @param e
+             */
+            @Override
+            public void mousePressed(MouseEvent e)
+            {
+                currPath = currPath.getParent();
+                listDirectoryContent();
+            }
+        });
+
+        view.getRefreshBtn().addMouseListener(new MouseAdapter()
+        {
+            /**
+             * {@inheritDoc}
+             *
+             * @param e
+             */
+            @Override
+            public void mousePressed(MouseEvent e)
+            {
+                listDirectoryContent();
             }
         });
     }
