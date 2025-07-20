@@ -71,25 +71,66 @@ public class View
 
         JPanel lowerPanel = new JPanel();
         lowerPanel.setLayout(new BoxLayout(lowerPanel, BoxLayout.LINE_AXIS));
+        lowerPanel.setBorder(new EmptyBorder(5, 8, 5, 5));
 
-        lowerPanel.add(new JButton("Test1"));
-        lowerPanel.add(new JButton("Test2"));
+        JButton newBtn = createMenuBtn("/images/new.svg", 24, 24);
+        newBtn.setText("New");
+        newBtn.setPreferredSize(new Dimension(82 + 5, 24 + 5));
+
+        lowerPanel.add(newBtn);
+        lowerPanel.add(Box.createHorizontalStrut(10));
+        lowerPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 24));
+        lowerPanel.add(Box.createHorizontalStrut(10));
+        lowerPanel.add(createMenuBtn("/images/rename.svg", 24, 24));
+        lowerPanel.add(Box.createHorizontalStrut(10));
+        lowerPanel.add(createMenuBtn("/images/share.svg", 24, 24));
+        lowerPanel.add(Box.createHorizontalStrut(10));
+        lowerPanel.add(createMenuBtn("/images/trash.svg", 24, 24));
+        lowerPanel.add(Box.createHorizontalStrut(10));
+        lowerPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 24));
+        lowerPanel.add(Box.createHorizontalStrut(10));
+        lowerPanel.add(createMenuBtn("/images/filter.svg", 24, 24));
+        lowerPanel.add(Box.createHorizontalStrut(10));
+        lowerPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 24));
+        lowerPanel.add(Box.createHorizontalStrut(10));
+        lowerPanel.add(createMenuBtn("/images/more.svg", 24, 24));
         lowerPanel.add(Box.createHorizontalGlue());
 
         mainPanel.add(upperPanel);
+        mainPanel.add(createSeparator(JSeparator.HORIZONTAL, Color.black, 0));
         mainPanel.add(lowerPanel);
+        mainPanel.add(createSeparator(JSeparator.HORIZONTAL, Color.black, 0));
 
         frame.add(mainPanel, BorderLayout.NORTH);
+
+        JPanel sideNavBar = new JPanel();
+        sideNavBar.setLayout(new BoxLayout(sideNavBar, BoxLayout.LINE_AXIS));
 
         JMenu list = new JMenu("List");
         list.add("Test1");
         list.add("Test2");
 
-        frame.add(list, BorderLayout.WEST);
+        sideNavBar.add(list);
+        sideNavBar.add(createSeparator(JSeparator.VERTICAL, Color.black, 0));
+
+        frame.add(sideNavBar, BorderLayout.WEST);
+
+        JPanel infoPanel = new JPanel();
+        infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.LINE_AXIS));
 
         elementsLabel = new JLabel("{} Elements");
         elementsLabel.setBorder(new EmptyBorder(2, 5, 2, 0));
-        frame.add(elementsLabel, BorderLayout.SOUTH);
+
+        JLabel selectedElementsLabel = new JLabel("{} Selected");
+        selectedElementsLabel.setBorder(new EmptyBorder(2, 0, 2, 0));
+
+        infoPanel.add(elementsLabel);
+        infoPanel.add(Box.createHorizontalStrut(5));
+        infoPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 12));
+        infoPanel.add(Box.createHorizontalStrut(5));
+        infoPanel.add(selectedElementsLabel);
+
+        frame.add(infoPanel, BorderLayout.SOUTH);
 
         String[] columnNames = { "Name", "Date modified", "Type", "Size"};
 
@@ -106,8 +147,14 @@ public class View
         table.setShowHorizontalLines(false);
         table.setShowVerticalLines(false);
         table.getColumnModel().getColumn(0).setCellRenderer(new FileNameTableCellRenderer());
+        table.getTableHeader().setOpaque(false);
+        table.getTableHeader().setBackground(Color.white);
+        table.getTableHeader().setForeground(Color.black);
 
-        frame.add(new JScrollPane(table), BorderLayout.CENTER);
+        JScrollPane tableScrollPane = new JScrollPane(table);
+        tableScrollPane.setBorder(BorderFactory.createEmptyBorder());
+
+        frame.add(tableScrollPane, BorderLayout.CENTER);
 
         frame.pack();
         frame.setLocationRelativeTo(null);
@@ -189,5 +236,19 @@ public class View
         {
             throw new RuntimeException(e);
         }
+    }
+
+    private JSeparator createSeparator(int orientation, Color color, int height)
+    {
+        JSeparator separator = new JSeparator(orientation);
+
+        if(height > 0)
+        {
+            separator.setMaximumSize(new Dimension(1, height));
+        }
+
+        separator.setForeground(color);
+
+        return separator;
     }
 }
