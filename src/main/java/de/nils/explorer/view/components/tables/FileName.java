@@ -1,4 +1,4 @@
-package de.nils.explorer.view.components;
+package de.nils.explorer.view.components.tables;
 
 import java.awt.*;
 

@@ -1,8 +1,9 @@
 package de.nils.explorer.view;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
-import de.nils.explorer.view.components.FileNameTableCellRenderer;
-import de.nils.explorer.view.components.ListDragListener;
+import de.nils.explorer.view.components.scrollpane.ScrollPaneWin11;
+import de.nils.explorer.view.components.tables.FileNameTableCellRenderer;
+import de.nils.explorer.view.components.listeners.ListDragListener;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -19,6 +20,7 @@ public class View
 {
     private final JTable table;
     private final JLabel elementsLabel;
+    private final JLabel selectedElementsLabel;
     private final JLabel pathLabel;
 
     private final JButton backBtn;
@@ -115,7 +117,8 @@ public class View
             sideBar.add(new JLabel("Test"));
         }
 
-        JScrollPane list = new JScrollPane(sideBar);
+        JScrollPane list = new ScrollPaneWin11();
+        list.setViewportView(sideBar);
         list.setPreferredSize(new Dimension(175, 100));
         list.setBorder(new EmptyBorder(0, 5, 0, 0));
 
@@ -133,10 +136,10 @@ public class View
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.LINE_AXIS));
 
-        elementsLabel = new JLabel("{} Elements");
+        elementsLabel = new JLabel("");
         elementsLabel.setBorder(new EmptyBorder(2, 5, 2, 0));
 
-        JLabel selectedElementsLabel = new JLabel("{} Selected");
+        selectedElementsLabel = new JLabel("");
         selectedElementsLabel.setBorder(new EmptyBorder(2, 0, 2, 0));
 
         infoPanel.add(elementsLabel);
@@ -166,7 +169,8 @@ public class View
         table.getTableHeader().setBackground(Color.white);
         table.getTableHeader().setForeground(Color.black);
 
-        JScrollPane tableScrollPane = new JScrollPane(table);
+        JScrollPane tableScrollPane = new ScrollPaneWin11();
+        tableScrollPane.setViewportView(table);
         tableScrollPane.setBorder(BorderFactory.createEmptyBorder());
 
         frame.add(tableScrollPane, BorderLayout.CENTER);
@@ -184,6 +188,11 @@ public class View
     public JLabel getElementsLabel()
     {
         return elementsLabel;
+    }
+
+    public JLabel getSelectedElementsLabel()
+    {
+        return selectedElementsLabel;
     }
 
     public JLabel getPathLabel()
@@ -230,7 +239,8 @@ public class View
                  * @param e
                  */
                 @Override
-                public void mouseEntered(MouseEvent e) {
+                public void mouseEntered(MouseEvent e)
+                {
                     btn.setOpaque(true);
                 }
 
@@ -240,7 +250,8 @@ public class View
                  * @param e
                  */
                 @Override
-                public void mouseExited(MouseEvent e) {
+                public void mouseExited(MouseEvent e)
+                {
                     btn.setOpaque(false);
                 }
             });

@@ -2,8 +2,10 @@ package de.nils.explorer.controller;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import de.nils.explorer.view.View;
-import de.nils.explorer.view.components.FileName;
+import de.nils.explorer.view.components.tables.FileName;
 
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -75,7 +77,6 @@ public class Controller
                             else
                             {
                                 Desktop.getDesktop().open(currPath.resolve(clickedItemName).toFile());
-                                System.out.println(currPath.resolve(clickedItemName).toFile());
                             }
                         }
                         catch (IOException ex)
@@ -83,6 +84,24 @@ public class Controller
                             throw new RuntimeException(ex);
                         }
                     }
+                }
+            }
+        });
+
+        view.getTable().getSelectionModel().addListSelectionListener(new ListSelectionListener()
+        {
+            @Override
+            public void valueChanged(ListSelectionEvent e)
+            {
+                int selectedRowCount = view.getTable().getSelectedRows().length;
+
+                if(selectedRowCount > 0)
+                {
+                    view.getSelectedElementsLabel().setText(selectedRowCount + " Selected");
+                }
+                else
+                {
+                    view.getSelectedElementsLabel().setText("");
                 }
             }
         });

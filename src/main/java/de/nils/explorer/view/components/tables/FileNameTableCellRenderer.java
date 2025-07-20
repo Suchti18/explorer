@@ -1,4 +1,4 @@
-package de.nils.explorer.view.components;
+package de.nils.explorer.view.components.tables;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;

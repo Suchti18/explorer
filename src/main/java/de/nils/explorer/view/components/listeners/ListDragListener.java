@@ -1,4 +1,4 @@
-package de.nils.explorer.view.components;
+package de.nils.explorer.view.components.listeners;
 
 import javax.swing.*;
 import java.awt.*;
