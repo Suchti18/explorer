@@ -21,12 +21,16 @@ public class View
     private final JTable table;
     private final JLabel elementsLabel;
     private final JLabel selectedElementsLabel;
-    private final JLabel pathLabel;
 
+    // Upper panel
+    private final JLabel pathLabel;
     private final JButton backBtn;
     private final JButton nextBtn;
     private final JButton topBtn;
     private final JButton refreshBtn;
+
+    // Lower panel
+    private final JButton newBtn;
 
     public View()
     {
@@ -60,6 +64,30 @@ public class View
         refreshBtn = createMenuBtn("/images/refresh.svg", 24, 24);
 
         pathLabel = new JLabel();
+        JPanel pathPanel = new JPanel()
+        {
+            @Override
+            protected void paintComponent(Graphics g)
+            {
+                super.paintComponent(g);
+                Dimension arcs = new Dimension(10,10);
+                int width = getWidth();
+                int height = getHeight();
+                Graphics2D graphics = (Graphics2D) g;
+                graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+
+                graphics.setColor(Color.lightGray);
+                graphics.fillRoundRect(0, 0, width-1, height-1, arcs.width, arcs.height);
+                graphics.setColor(getBackground());
+                graphics.drawRoundRect(0, 0, width-1, height-1, arcs.width, arcs.height);
+            }
+        };
+
+        pathPanel.add(pathLabel);
+
+        JScrollPane pathScrollPane = new ScrollPaneWin11();
+        pathScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        pathScrollPane.setViewportView(pathPanel);
 
         upperPanel.add(backBtn);
         upperPanel.add(Box.createHorizontalStrut(10));
@@ -69,16 +97,16 @@ public class View
         upperPanel.add(Box.createHorizontalStrut(10));
         upperPanel.add(refreshBtn);
         upperPanel.add(Box.createHorizontalStrut(10));
-        upperPanel.add(pathLabel);
-        upperPanel.add(Box.createHorizontalGlue());
+        upperPanel.add(pathScrollPane);
 
         JPanel lowerPanel = new JPanel();
         lowerPanel.setLayout(new BoxLayout(lowerPanel, BoxLayout.LINE_AXIS));
         lowerPanel.setBorder(new EmptyBorder(5, 8, 5, 5));
 
-        JButton newBtn = createMenuBtn("/images/new.svg", 24, 24);
+        newBtn = createMenuBtn("/images/new.svg", 24, 24);
         newBtn.setText("New");
         newBtn.setPreferredSize(new Dimension(82 + 5, 24 + 5));
+        newBtn.setMinimumSize(new Dimension(82 + 5, 24 + 5));
 
         lowerPanel.add(newBtn);
         lowerPanel.add(Box.createHorizontalStrut(10));
@@ -220,6 +248,11 @@ public class View
         return refreshBtn;
     }
 
+    public JButton getNewBtn()
+    {
+        return newBtn;
+    }
+
     private JButton createMenuBtn(String resourceName, int width, int height)
     {
         try
@@ -232,6 +265,7 @@ public class View
             btn.setOpaque(false);
             btn.setBackground(Color.lightGray);
             btn.setPreferredSize(new Dimension(width + 5, height + 5));
+            btn.setMinimumSize(new Dimension(width + 5, height + 5));
             btn.addMouseListener(new MouseAdapter() {
                 /**
                  * {@inheritDoc}

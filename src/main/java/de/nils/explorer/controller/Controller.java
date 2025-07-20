@@ -4,8 +4,7 @@ import com.formdev.flatlaf.extras.FlatSVGIcon;
 import de.nils.explorer.view.View;
 import de.nils.explorer.view.components.tables.FileName;
 
-import javax.swing.event.ListSelectionEvent;
-import javax.swing.event.ListSelectionListener;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -88,21 +87,17 @@ public class Controller
             }
         });
 
-        view.getTable().getSelectionModel().addListSelectionListener(new ListSelectionListener()
+        view.getTable().getSelectionModel().addListSelectionListener(e ->
         {
-            @Override
-            public void valueChanged(ListSelectionEvent e)
-            {
-                int selectedRowCount = view.getTable().getSelectedRows().length;
+            int selectedRowCount = view.getTable().getSelectedRows().length;
 
-                if(selectedRowCount > 0)
-                {
-                    view.getSelectedElementsLabel().setText(selectedRowCount + " Selected");
-                }
-                else
-                {
-                    view.getSelectedElementsLabel().setText("");
-                }
+            if(selectedRowCount > 0)
+            {
+                view.getSelectedElementsLabel().setText(selectedRowCount + " Selected");
+            }
+            else
+            {
+                view.getSelectedElementsLabel().setText("");
             }
         });
 
@@ -133,6 +128,28 @@ public class Controller
             {
                 listDirectoryContent();
             }
+        });
+
+        view.getNewBtn().addActionListener(e ->
+        {
+            Component b = (Component) e.getSource();
+
+            Point p=b.getLocationOnScreen();
+
+            JPopupMenu menu = new JPopupMenu();
+
+            JMenuItem m1 = new JMenuItem("Folder");
+            JMenuItem m2 = new JMenuItem("File");
+
+            m1.setIcon(new ImageIcon(folderImg));
+            m2.setIcon(new ImageIcon(fileImg));
+
+            menu.add(m1);
+            menu.add(m2);
+
+            menu.show(view.getNewBtn(),0,0);
+
+            menu.setLocation(p.x,p.y+b.getHeight());
         });
     }
 
