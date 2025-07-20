@@ -7,8 +7,9 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.net.MalformedURLException;
+import java.net.URISyntaxException;
+import java.util.Objects;
 
 public class View
 {
@@ -19,7 +20,19 @@ public class View
     {
         JFrame frame = new JFrame("Explorer");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setIconImage(new ImageIcon(Paths.get(".", "src", "main", "resources", "icons", "256-explorer.png").toString()).getImage());
+
+        try
+        {
+            frame.setIconImage(
+                    new ImageIcon(
+                            Objects.requireNonNull(
+                                    getClass().getResource("/icons/256-explorer.png")).toURI().toURL()).getImage());
+        }
+        catch (URISyntaxException | MalformedURLException e)
+        {
+            throw new RuntimeException(e);
+        }
+
         frame.setLayout(new BorderLayout());
 
         JPanel mainPanel = new JPanel();
@@ -34,16 +47,16 @@ public class View
         JButton refreshBtn = new JButton();
         try
         {
-            FlatSVGIcon svg = new FlatSVGIcon(Files.newInputStream(Paths.get(".", "src", "main", "resources", "images", "left.svg")));
+            FlatSVGIcon svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/left.svg"));
             backBtn.setIcon(new ImageIcon(svg.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
 
-            svg = new FlatSVGIcon(Files.newInputStream(Paths.get(".", "src", "main", "resources", "images", "right.svg")));
+            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/right.svg"));
             nextBtn.setIcon(new ImageIcon(svg.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
 
-            svg = new FlatSVGIcon(Files.newInputStream(Paths.get(".", "src", "main", "resources", "images", "top.svg")));
+            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/top.svg"));
             topBtn.setIcon(new ImageIcon(svg.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
 
-            svg = new FlatSVGIcon(Files.newInputStream(Paths.get(".", "src", "main", "resources", "images", "refresh.svg")));
+            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/refresh.svg"));
             refreshBtn.setIcon(new ImageIcon(svg.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
         }
         catch (IOException e)
