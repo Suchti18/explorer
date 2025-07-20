@@ -1,9 +1,13 @@
 package de.nils.explorer.view;
 
+import com.formdev.flatlaf.extras.FlatSVGIcon;
+
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 
 public class View
@@ -24,9 +28,36 @@ public class View
         JPanel upperPanel = new JPanel();
         upperPanel.setLayout(new BoxLayout(upperPanel, BoxLayout.LINE_AXIS));
 
-        upperPanel.add(new JButton("Back"));
+        JButton backBtn = new JButton();
+        JButton nextBtn = new JButton();
+        JButton topBtn = new JButton();
+        JButton refreshBtn = new JButton();
+        try
+        {
+            FlatSVGIcon svg = new FlatSVGIcon(Files.newInputStream(Paths.get(".", "src", "main", "resources", "images", "left.svg")));
+            backBtn.setIcon(new ImageIcon(svg.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
+
+            svg = new FlatSVGIcon(Files.newInputStream(Paths.get(".", "src", "main", "resources", "images", "right.svg")));
+            nextBtn.setIcon(new ImageIcon(svg.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
+
+            svg = new FlatSVGIcon(Files.newInputStream(Paths.get(".", "src", "main", "resources", "images", "top.svg")));
+            topBtn.setIcon(new ImageIcon(svg.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
+
+            svg = new FlatSVGIcon(Files.newInputStream(Paths.get(".", "src", "main", "resources", "images", "refresh.svg")));
+            refreshBtn.setIcon(new ImageIcon(svg.getImage().getScaledInstance(24, 24, Image.SCALE_SMOOTH)));
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        upperPanel.add(backBtn);
         upperPanel.add(Box.createHorizontalStrut(5));
-        upperPanel.add(new JButton("Root"));
+        upperPanel.add(nextBtn);
+        upperPanel.add(Box.createHorizontalStrut(5));
+        upperPanel.add(topBtn);
+        upperPanel.add(Box.createHorizontalStrut(5));
+        upperPanel.add(refreshBtn);
         upperPanel.add(Box.createHorizontalGlue());
 
         JPanel lowerPanel = new JPanel();
