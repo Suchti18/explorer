@@ -1,6 +1,8 @@
 package de.nils.explorer.controller;
 
+import com.formdev.flatlaf.extras.FlatSVGIcon;
 import de.nils.explorer.view.View;
+import de.nils.explorer.view.components.FileName;
 
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -15,11 +17,27 @@ import java.util.stream.Stream;
 
 public class Controller
 {
+    private final Image folderImg;
+    private final Image fileImg;
+
     private final View view;
     private Path currPath;
 
     public Controller(View view)
     {
+        FlatSVGIcon svg;
+        try
+        {
+            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/folder.svg"));
+            folderImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/file.svg"));
+            fileImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+
         this.view = view;
         currPath = Paths.get(".");
 
@@ -79,11 +97,27 @@ public class Controller
             {
                 if(Files.exists(path))
                 {
-                    try {
-                        String[] data = {path.getFileName().toString(), Files.getLastModifiedTime(path).toString(), Files.isDirectory(path) ? "Directory" : "File", Files.size(path) + " Bytes"};
+                    try
+                    {
+                        Image img;
+                        String type;
+                        if(Files.isDirectory(path))
+                        {
+                            img = folderImg;
+                            type = "Directory";
+                        }
+                        else
+                        {
+                            img = fileImg;
+                            type = "File";
+                        }
+
+                        Object[] data = {new FileName(img, path.getFileName().toString()), Files.getLastModifiedTime(path).toString(), type, Files.size(path) + " Bytes"};
                         ((DefaultTableModel) view.getTable().getModel()).addRow(data);
                         count.getAndIncrement();
-                    } catch (IOException e) {
+                    }
+                    catch (IOException e)
+                    {
                         throw new RuntimeException(e);
                     }
                 }

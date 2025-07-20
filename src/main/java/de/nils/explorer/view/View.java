@@ -1,6 +1,7 @@
 package de.nils.explorer.view;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import de.nils.explorer.view.components.FileNameTableCellRenderer;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -114,10 +115,12 @@ public class View
         table = new JTable(tableModel);
         table.setShowHorizontalLines(false);
         table.setShowVerticalLines(false);
+        table.getColumnModel().getColumn(0).setCellRenderer(new FileNameTableCellRenderer());
 
         frame.add(new JScrollPane(table), BorderLayout.CENTER);
 
         frame.pack();
+        frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
 
