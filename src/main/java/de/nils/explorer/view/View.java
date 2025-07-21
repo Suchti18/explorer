@@ -141,17 +141,17 @@ public class View
         sideBar.setLayout(new BoxLayout(sideBar, BoxLayout.PAGE_AXIS));
         sideBar.setBorder(new EmptyBorder(0, 5, 0, 5));
 
-        sideBar.add(new JLabel("Desktop"));
-        sideBar.add(new JLabel("Downloads"));
-        sideBar.add(new JLabel("Documents"));
-        sideBar.add(new JLabel("Pictures"));
-        sideBar.add(new JLabel("Music"));
-        sideBar.add(new JLabel("Videos"));
+        sideBar.add(createSidebarBtn("/images/desktop.svg", "Desktop"));
+        sideBar.add(createSidebarBtn("/images/download.svg", "Downloads"));
+        sideBar.add(createSidebarBtn("/images/document.svg", "Documents"));
+        sideBar.add(createSidebarBtn("/images/picture.svg", "Pictures"));
+        sideBar.add(createSidebarBtn("/images/music.svg", "Music"));
+        sideBar.add(createSidebarBtn("/images/video.svg", "Videos"));
         sideBar.add(Box.createVerticalStrut(10));
         sideBar.add(createSeparator(JSeparator.HORIZONTAL, Color.black, Integer.MAX_VALUE, 1));
         sideBar.add(Box.createVerticalStrut(10));
-        sideBar.add(new JLabel("This PC"));
-        sideBar.add(new JLabel("Network"));
+        sideBar.add(createSidebarBtn("/images/computer.svg", "This PC"));
+        sideBar.add(createSidebarBtn("/images/network.svg", "Network"));
         sideBar.add(Box.createVerticalGlue());
 
         JScrollPane list = new ScrollPaneWin11();
@@ -276,7 +276,8 @@ public class View
             btn.setBackground(Color.lightGray);
             btn.setPreferredSize(new Dimension(width + 5, height + 5));
             btn.setMinimumSize(new Dimension(width + 5, height + 5));
-            btn.addMouseListener(new MouseAdapter() {
+            btn.addMouseListener(new MouseAdapter()
+            {
                 /**
                  * {@inheritDoc}
                  *
@@ -296,6 +297,48 @@ public class View
                 @Override
                 public void mouseExited(MouseEvent e)
                 {
+                    btn.setOpaque(false);
+                }
+            });
+
+            return btn;
+        }
+        catch (IOException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private JButton createSidebarBtn(String resourceName, String text)
+    {
+        try
+        {
+            FlatSVGIcon svg = new FlatSVGIcon(getClass().getResourceAsStream(resourceName));
+            JButton btn = new JButton(text);
+            btn.setIcon(new ImageIcon(svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
+            btn.setFocusPainted(false);
+            btn.setBorderPainted(false);
+            btn.setOpaque(false);
+            btn.setBackground(Color.lightGray);
+            btn.addMouseListener(new MouseAdapter()
+            {
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param e
+                 */
+                @Override
+                public void mouseEntered(MouseEvent e) {
+                    btn.setOpaque(true);
+                }
+
+                /**
+                 * {@inheritDoc}
+                 *
+                 * @param e
+                 */
+                @Override
+                public void mouseExited(MouseEvent e) {
                     btn.setOpaque(false);
                 }
             });
