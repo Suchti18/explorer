@@ -158,6 +158,7 @@ public class View
         list.setViewportView(sideBar);
         list.getVerticalScrollBar().setUnitIncrement(16);
         list.setPreferredSize(new Dimension(175, 100));
+        list.setBorder(BorderFactory.createEmptyBorder());
 
         JSeparator sideBarSeparator = createSeparator(JSeparator.VERTICAL, Color.black, 0, 0);
 
