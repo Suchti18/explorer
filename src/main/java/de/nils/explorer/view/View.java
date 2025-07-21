@@ -110,7 +110,7 @@ public class View
 
         lowerPanel.add(newBtn);
         lowerPanel.add(Box.createHorizontalStrut(10));
-        lowerPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 24));
+        lowerPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 1, 24));
         lowerPanel.add(Box.createHorizontalStrut(10));
         lowerPanel.add(createMenuBtn("/images/rename.svg", 24, 24));
         lowerPanel.add(Box.createHorizontalStrut(10));
@@ -118,19 +118,19 @@ public class View
         lowerPanel.add(Box.createHorizontalStrut(10));
         lowerPanel.add(createMenuBtn("/images/trash.svg", 24, 24));
         lowerPanel.add(Box.createHorizontalStrut(10));
-        lowerPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 24));
+        lowerPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 1, 24));
         lowerPanel.add(Box.createHorizontalStrut(10));
         lowerPanel.add(createMenuBtn("/images/filter.svg", 24, 24));
         lowerPanel.add(Box.createHorizontalStrut(10));
-        lowerPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 24));
+        lowerPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 1, 24));
         lowerPanel.add(Box.createHorizontalStrut(10));
         lowerPanel.add(createMenuBtn("/images/more.svg", 24, 24));
         lowerPanel.add(Box.createHorizontalGlue());
 
         mainPanel.add(upperPanel);
-        mainPanel.add(createSeparator(JSeparator.HORIZONTAL, Color.black, 0));
+        mainPanel.add(createSeparator(JSeparator.HORIZONTAL, Color.black, 0, 0));
         mainPanel.add(lowerPanel);
-        mainPanel.add(createSeparator(JSeparator.HORIZONTAL, Color.black, 0));
+        mainPanel.add(createSeparator(JSeparator.HORIZONTAL, Color.black, 0, 0));
 
         frame.add(mainPanel, BorderLayout.NORTH);
 
@@ -139,18 +139,27 @@ public class View
 
         JPanel sideBar =  new JPanel();
         sideBar.setLayout(new BoxLayout(sideBar, BoxLayout.PAGE_AXIS));
+        sideBar.setBorder(new EmptyBorder(0, 5, 0, 5));
 
-        for(int i = 1; i < 50; i++)
-        {
-            sideBar.add(new JLabel("Test"));
-        }
+        sideBar.add(new JLabel("Desktop"));
+        sideBar.add(new JLabel("Downloads"));
+        sideBar.add(new JLabel("Documents"));
+        sideBar.add(new JLabel("Pictures"));
+        sideBar.add(new JLabel("Music"));
+        sideBar.add(new JLabel("Videos"));
+        sideBar.add(Box.createVerticalStrut(10));
+        sideBar.add(createSeparator(JSeparator.HORIZONTAL, Color.black, Integer.MAX_VALUE, 1));
+        sideBar.add(Box.createVerticalStrut(10));
+        sideBar.add(new JLabel("This PC"));
+        sideBar.add(new JLabel("Network"));
+        sideBar.add(Box.createVerticalGlue());
 
         JScrollPane list = new ScrollPaneWin11();
         list.setViewportView(sideBar);
+        list.getVerticalScrollBar().setUnitIncrement(16);
         list.setPreferredSize(new Dimension(175, 100));
-        list.setBorder(new EmptyBorder(0, 5, 0, 0));
 
-        JSeparator sideBarSeparator = createSeparator(JSeparator.VERTICAL, Color.black, 0);
+        JSeparator sideBarSeparator = createSeparator(JSeparator.VERTICAL, Color.black, 0, 0);
 
         ListDragListener listDragListener = new ListDragListener(list, frame, sideBarSeparator);
         sideBarSeparator.addMouseListener(listDragListener);
@@ -172,7 +181,7 @@ public class View
 
         infoPanel.add(elementsLabel);
         infoPanel.add(Box.createHorizontalStrut(5));
-        infoPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 12));
+        infoPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 1, 12));
         infoPanel.add(Box.createHorizontalStrut(5));
         infoPanel.add(selectedElementsLabel);
 
@@ -298,13 +307,13 @@ public class View
         }
     }
 
-    private JSeparator createSeparator(int orientation, Color color, int height)
+    private JSeparator createSeparator(int orientation, Color color, int width, int height)
     {
         JSeparator separator = new JSeparator(orientation);
 
-        if(height > 0)
+        if(width > 0 && height > 0)
         {
-            separator.setMaximumSize(new Dimension(1, height));
+            separator.setMaximumSize(new Dimension(width, height));
         }
 
         separator.setForeground(color);

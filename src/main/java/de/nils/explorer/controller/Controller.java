@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -44,6 +45,21 @@ public class Controller
 
         this.view = view;
         currPath = Paths.get(".").toAbsolutePath().normalize();
+
+        final AtomicBoolean isNewPopupMenuOpen = new AtomicBoolean(false);
+        JPopupMenu newMenu = new JPopupMenu();
+
+        JMenuItem folderMenuItem = new JMenuItem("Folder");
+        JMenuItem fileMenuItem = new JMenuItem("File");
+
+        folderMenuItem.setIcon(new ImageIcon(folderImg));
+        fileMenuItem.setIcon(new ImageIcon(fileImg));
+
+        folderMenuItem.addActionListener(e -> isNewPopupMenuOpen.set(false));
+        fileMenuItem.addActionListener(e -> isNewPopupMenuOpen.set(false));
+
+        newMenu.add(folderMenuItem);
+        newMenu.add(fileMenuItem);
 
         listDirectoryContent();
 
@@ -132,24 +148,15 @@ public class Controller
 
         view.getNewBtn().addActionListener(e ->
         {
-            Component b = (Component) e.getSource();
-
-            Point p=b.getLocationOnScreen();
-
-            JPopupMenu menu = new JPopupMenu();
-
-            JMenuItem m1 = new JMenuItem("Folder");
-            JMenuItem m2 = new JMenuItem("File");
-
-            m1.setIcon(new ImageIcon(folderImg));
-            m2.setIcon(new ImageIcon(fileImg));
-
-            menu.add(m1);
-            menu.add(m2);
-
-            menu.show(view.getNewBtn(),0,0);
-
-            menu.setLocation(p.x,p.y+b.getHeight());
+            if(isNewPopupMenuOpen.get())
+            {
+                isNewPopupMenuOpen.set(false);
+            }
+            else
+            {
+                newMenu.show(view.getNewBtn(), 0, view.getNewBtn().getHeight());
+                isNewPopupMenuOpen.set(true);
+            }
         });
     }
 
