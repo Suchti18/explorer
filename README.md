@@ -1,4 +1,10 @@
-# 📂 explorer
+<div align="center">
+
+[![Explorer](.github/banner.svg)](#📂explorer)
+
+</div>
+
+# 📂 Explorer
 Windows 10 Explorer for Windows XP
 
 ## Usage
