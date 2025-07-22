@@ -27,6 +27,7 @@ public class Controller
 
     private final View view;
     private Path currPath;
+    private Path previousPath;
 
     public Controller(View view)
     {
@@ -63,6 +64,27 @@ public class Controller
 
         listDirectoryContent();
 
+        addDoubleClickOnTableFunctionality();
+        addSelectedLabelFunctionality();
+        addUpperPanelBtnFunctionality();
+        addLowerPanelBtnFunctionality();
+
+        view.getNewBtn().addActionListener(e ->
+        {
+            if(isNewPopupMenuOpen.get())
+            {
+                isNewPopupMenuOpen.set(false);
+            }
+            else
+            {
+                newMenu.show(view.getNewBtn(), 0, view.getNewBtn().getHeight());
+                isNewPopupMenuOpen.set(true);
+            }
+        });
+    }
+
+    private void addDoubleClickOnTableFunctionality()
+    {
         view.getTable().addMouseListener(new MouseAdapter() {
             /**
              * {@inheritDoc}
@@ -102,7 +124,10 @@ public class Controller
                 }
             }
         });
+    }
 
+    private void addSelectedLabelFunctionality()
+    {
         view.getTable().getSelectionModel().addListSelectionListener(e ->
         {
             int selectedRowCount = view.getTable().getSelectedRows().length;
@@ -116,7 +141,10 @@ public class Controller
                 view.getSelectedElementsLabel().setText("");
             }
         });
+    }
 
+    private void addUpperPanelBtnFunctionality()
+    {
         view.getBackBtn().addMouseListener(new MouseAdapter()
         {
             /**
@@ -127,8 +155,42 @@ public class Controller
             @Override
             public void mousePressed(MouseEvent e)
             {
+                previousPath = currPath;
                 currPath = currPath.getParent();
                 listDirectoryContent();
+            }
+        });
+
+        view.getNextBtn().addMouseListener(new MouseAdapter()
+        {
+            /**
+             * {@inheritDoc}
+             *
+             * @param e
+             */
+            @Override
+            public void mousePressed(MouseEvent e)
+            {
+                if(previousPath != null)
+                {
+                    currPath = previousPath;
+                    previousPath = null;
+                    listDirectoryContent();
+                }
+            }
+        });
+
+        view.getTopBtn().addMouseListener(new MouseAdapter()
+        {
+            /**
+             * {@inheritDoc}
+             *
+             * @param e
+             */
+            @Override
+            public void mousePressed(MouseEvent e)
+            {
+                super.mousePressed(e);
             }
         });
 
@@ -145,19 +207,11 @@ public class Controller
                 listDirectoryContent();
             }
         });
+    }
 
-        view.getNewBtn().addActionListener(e ->
-        {
-            if(isNewPopupMenuOpen.get())
-            {
-                isNewPopupMenuOpen.set(false);
-            }
-            else
-            {
-                newMenu.show(view.getNewBtn(), 0, view.getNewBtn().getHeight());
-                isNewPopupMenuOpen.set(true);
-            }
-        });
+    private void addLowerPanelBtnFunctionality()
+    {
+
     }
 
     public void listDirectoryContent()

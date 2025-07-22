@@ -1,6 +1,7 @@
 package de.nils.explorer.view;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
+import de.nils.explorer.common.Const;
 import de.nils.explorer.view.components.scrollpane.ScrollPaneWin11;
 import de.nils.explorer.view.components.tables.FileNameTableCellRenderer;
 import de.nils.explorer.view.components.listeners.ListDragListener;
@@ -31,10 +32,15 @@ public class View
 
     // Lower panel
     private final JButton newBtn;
+    private final JButton renameBtn;
+    private final JButton shareBtn;
+    private final JButton trashBtn;
+    private final JButton filterBtn;
+    private final JButton moreBtn;
 
     public View()
     {
-        JFrame frame = new JFrame("Explorer");
+        JFrame frame = new JFrame(Const.WINDOW_TITLE);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         try
@@ -42,7 +48,7 @@ public class View
             frame.setIconImage(
                     new ImageIcon(
                             Objects.requireNonNull(
-                                    getClass().getResource("/icons/256-explorer.png")).toURI().toURL()).getImage());
+                                    getClass().getResource(Const.EXPLORER_ICON)).toURI().toURL()).getImage());
         }
         catch (URISyntaxException | MalformedURLException e)
         {
@@ -58,10 +64,10 @@ public class View
         upperPanel.setLayout(new BoxLayout(upperPanel, BoxLayout.LINE_AXIS));
         upperPanel.setBorder(new EmptyBorder(5, 8, 5, 5));
 
-        backBtn = createMenuBtn("/images/left.svg", 24, 24);
-        nextBtn = createMenuBtn("/images/right.svg", 24, 24);
-        topBtn = createMenuBtn("/images/top.svg", 24, 24);
-        refreshBtn = createMenuBtn("/images/refresh.svg", 24, 24);
+        backBtn = createMenuBtn(Const.LEFT_ARROW_SVG, 24, 24);
+        nextBtn = createMenuBtn(Const.RIGHT_ARROW_SVG, 24, 24);
+        topBtn = createMenuBtn(Const.TOP_ARROW_SVG, 24, 24);
+        refreshBtn = createMenuBtn(Const.REFRESH_SVG, 24, 24);
 
         pathLabel = new JLabel();
         JPanel pathPanel = new JPanel()
@@ -103,28 +109,33 @@ public class View
         lowerPanel.setLayout(new BoxLayout(lowerPanel, BoxLayout.LINE_AXIS));
         lowerPanel.setBorder(new EmptyBorder(5, 8, 5, 5));
 
-        newBtn = createMenuBtn("/images/new.svg", 24, 24);
+        newBtn = createMenuBtn(Const.NEW_SVG, 24, 24);
         newBtn.setText("New");
         newBtn.setPreferredSize(new Dimension(82 + 5, 24 + 5));
         newBtn.setMinimumSize(new Dimension(82 + 5, 24 + 5));
+        renameBtn = createMenuBtn(Const.RENAME_SVG, 24, 24);
+        shareBtn = createMenuBtn(Const.SHARE_SVG, 24, 24);
+        trashBtn = createMenuBtn(Const.TRASH_SVG, 24, 24);
+        filterBtn = createMenuBtn(Const.FILTER_SVG, 24, 24);
+        moreBtn = createMenuBtn(Const.MORE_SVG, 24, 24);
 
         lowerPanel.add(newBtn);
         lowerPanel.add(Box.createHorizontalStrut(10));
         lowerPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 1, 24));
         lowerPanel.add(Box.createHorizontalStrut(10));
-        lowerPanel.add(createMenuBtn("/images/rename.svg", 24, 24));
+        lowerPanel.add(renameBtn);
         lowerPanel.add(Box.createHorizontalStrut(10));
-        lowerPanel.add(createMenuBtn("/images/share.svg", 24, 24));
+        lowerPanel.add(shareBtn);
         lowerPanel.add(Box.createHorizontalStrut(10));
-        lowerPanel.add(createMenuBtn("/images/trash.svg", 24, 24));
-        lowerPanel.add(Box.createHorizontalStrut(10));
-        lowerPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 1, 24));
-        lowerPanel.add(Box.createHorizontalStrut(10));
-        lowerPanel.add(createMenuBtn("/images/filter.svg", 24, 24));
+        lowerPanel.add(trashBtn);
         lowerPanel.add(Box.createHorizontalStrut(10));
         lowerPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 1, 24));
         lowerPanel.add(Box.createHorizontalStrut(10));
-        lowerPanel.add(createMenuBtn("/images/more.svg", 24, 24));
+        lowerPanel.add(filterBtn);
+        lowerPanel.add(Box.createHorizontalStrut(10));
+        lowerPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 1, 24));
+        lowerPanel.add(Box.createHorizontalStrut(10));
+        lowerPanel.add(moreBtn);
         lowerPanel.add(Box.createHorizontalGlue());
 
         mainPanel.add(upperPanel);
@@ -141,17 +152,17 @@ public class View
         sideBar.setLayout(new BoxLayout(sideBar, BoxLayout.PAGE_AXIS));
         sideBar.setBorder(new EmptyBorder(0, 5, 0, 5));
 
-        sideBar.add(createSidebarBtn("/images/desktop.svg", "Desktop"));
-        sideBar.add(createSidebarBtn("/images/download.svg", "Downloads"));
-        sideBar.add(createSidebarBtn("/images/document.svg", "Documents"));
-        sideBar.add(createSidebarBtn("/images/picture.svg", "Pictures"));
-        sideBar.add(createSidebarBtn("/images/music.svg", "Music"));
-        sideBar.add(createSidebarBtn("/images/video.svg", "Videos"));
+        sideBar.add(createSidebarBtn(Const.DESKTOP_SVG, "Desktop"));
+        sideBar.add(createSidebarBtn(Const.DOWNLOAD_SVG, "Downloads"));
+        sideBar.add(createSidebarBtn(Const.DOCUMENT_SVG, "Documents"));
+        sideBar.add(createSidebarBtn(Const.PICTURE_SVG, "Pictures"));
+        sideBar.add(createSidebarBtn(Const.MUSIC_SVG, "Music"));
+        sideBar.add(createSidebarBtn(Const.VIDEO_SVG, "Videos"));
         sideBar.add(Box.createVerticalStrut(10));
         sideBar.add(createSeparator(JSeparator.HORIZONTAL, Color.black, Integer.MAX_VALUE, 1));
         sideBar.add(Box.createVerticalStrut(10));
-        sideBar.add(createSidebarBtn("/images/computer.svg", "This PC"));
-        sideBar.add(createSidebarBtn("/images/network.svg", "Network"));
+        sideBar.add(createSidebarBtn(Const.COMPUTER_SVG, "This PC"));
+        sideBar.add(createSidebarBtn(Const.NETWORK_SVG, "Network"));
         sideBar.add(Box.createVerticalGlue());
 
         JScrollPane list = new ScrollPaneWin11();
@@ -188,9 +199,7 @@ public class View
 
         frame.add(infoPanel, BorderLayout.SOUTH);
 
-        String[] columnNames = { "Name", "Date modified", "Type", "Size"};
-
-        DefaultTableModel tableModel = new DefaultTableModel(columnNames, 0)
+        DefaultTableModel tableModel = new DefaultTableModel(Const.COLUMN_NAMES, 0)
         {
             @Override
             public boolean isCellEditable(int row, int column)
@@ -261,6 +270,31 @@ public class View
     public JButton getNewBtn()
     {
         return newBtn;
+    }
+
+    public JButton getRenameBtn()
+    {
+        return renameBtn;
+    }
+
+    public JButton getShareBtn()
+    {
+        return shareBtn;
+    }
+
+    public JButton getTrashBtn()
+    {
+        return trashBtn;
+    }
+
+    public JButton getFilterBtn()
+    {
+        return filterBtn;
+    }
+
+    public JButton getMoreBtn()
+    {
+        return moreBtn;
     }
 
     private JButton createMenuBtn(String resourceName, int width, int height)
