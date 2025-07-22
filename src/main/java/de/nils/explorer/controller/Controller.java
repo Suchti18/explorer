@@ -3,8 +3,11 @@ package de.nils.explorer.controller;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import de.nils.explorer.view.View;
 import de.nils.explorer.view.components.tables.FileName;
+import de.nils.explorer.view.components.tables.FileTableModel;
 
 import javax.swing.*;
+import javax.swing.event.CellEditorListener;
+import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -29,6 +32,9 @@ public class Controller
     private Path currPath;
     private Path previousPath;
 
+    private final AtomicBoolean isNewPopupMenuOpen;
+    private final JPopupMenu newMenu;
+
     public Controller(View view)
     {
         FlatSVGIcon svg;
@@ -47,8 +53,8 @@ public class Controller
         this.view = view;
         currPath = Paths.get(".").toAbsolutePath().normalize();
 
-        final AtomicBoolean isNewPopupMenuOpen = new AtomicBoolean(false);
-        JPopupMenu newMenu = new JPopupMenu();
+        isNewPopupMenuOpen = new AtomicBoolean(false);
+        newMenu = new JPopupMenu();
 
         JMenuItem folderMenuItem = new JMenuItem("Folder");
         JMenuItem fileMenuItem = new JMenuItem("File");
@@ -68,19 +74,6 @@ public class Controller
         addSelectedLabelFunctionality();
         addUpperPanelBtnFunctionality();
         addLowerPanelBtnFunctionality();
-
-        view.getNewBtn().addActionListener(e ->
-        {
-            if(isNewPopupMenuOpen.get())
-            {
-                isNewPopupMenuOpen.set(false);
-            }
-            else
-            {
-                newMenu.show(view.getNewBtn(), 0, view.getNewBtn().getHeight());
-                isNewPopupMenuOpen.set(true);
-            }
-        });
     }
 
     private void addDoubleClickOnTableFunctionality()
@@ -211,7 +204,55 @@ public class Controller
 
     private void addLowerPanelBtnFunctionality()
     {
+        view.getNewBtn().addActionListener(e ->
+        {
+            if(isNewPopupMenuOpen.get())
+            {
+                isNewPopupMenuOpen.set(false);
+            }
+            else
+            {
+                newMenu.show(view.getNewBtn(), 0, view.getNewBtn().getHeight());
+                isNewPopupMenuOpen.set(true);
+            }
+        });
 
+        view.getRenameBtn().addActionListener(e ->
+        {
+            int row = view.getTable().getSelectionModel().getLeadSelectionIndex();
+            Object originalObject = view.getTable().getValueAt(row, 0);
+            Path src = currPath.resolve(originalObject.toString());
+
+            view.getTable().getSelectionModel().clearSelection();
+
+            ((FileTableModel) view.getTable().getModel()).setEditableRow(row);
+            view.getTable().editCellAt(row, 0);
+            ((FileTableModel) view.getTable().getModel()).clearEditableRow();
+
+            view.getTable().getCellEditor(row, 0).addCellEditorListener(new CellEditorListener() {
+                @Override
+                public void editingStopped(ChangeEvent e)
+                {
+                    CellEditor cellEditor = (CellEditor) e.getSource();
+                    Path target = currPath.resolve(cellEditor.getCellEditorValue().toString());
+
+                    boolean success = src.toFile().renameTo(target.toFile());
+
+                    if(!success)
+                    {
+                        //TODO: Send Notification that the file/folder was not renamed
+                    }
+
+                    listDirectoryContent();
+                }
+
+                @Override
+                public void editingCanceled(ChangeEvent e)
+                {
+                    listDirectoryContent();
+                }
+            });
+        });
     }
 
     public void listDirectoryContent()
@@ -267,5 +308,7 @@ public class Controller
         view.getElementsLabel().setText(count.get() + " Elements");
         // Update path label
         view.getPathLabel().setText(currPath.toAbsolutePath().normalize().toString());
+        // Clear selection to prevent auto-selecting the first row
+        SwingUtilities.invokeLater(() -> view.getTable().clearSelection());
     }
 }

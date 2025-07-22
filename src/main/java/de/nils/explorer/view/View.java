@@ -3,8 +3,10 @@ package de.nils.explorer.view;
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import de.nils.explorer.common.Const;
 import de.nils.explorer.view.components.scrollpane.ScrollPaneWin11;
+import de.nils.explorer.view.components.tables.FileNameTableCellEditor;
 import de.nils.explorer.view.components.tables.FileNameTableCellRenderer;
 import de.nils.explorer.view.components.listeners.ListDragListener;
+import de.nils.explorer.view.components.tables.FileTableModel;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -199,18 +201,12 @@ public class View
 
         frame.add(infoPanel, BorderLayout.SOUTH);
 
-        DefaultTableModel tableModel = new DefaultTableModel(Const.COLUMN_NAMES, 0)
-        {
-            @Override
-            public boolean isCellEditable(int row, int column)
-            {
-                return false;
-            }
-        };
+        DefaultTableModel tableModel = new FileTableModel(Const.COLUMN_NAMES, 0);
 
         table = new JTable(tableModel);
         table.setShowHorizontalLines(false);
         table.setShowVerticalLines(false);
+        table.getColumnModel().getColumn(0).setCellEditor(new FileNameTableCellEditor());
         table.getColumnModel().getColumn(0).setCellRenderer(new FileNameTableCellRenderer());
         table.getTableHeader().setOpaque(false);
         table.getTableHeader().setBackground(Color.white);
