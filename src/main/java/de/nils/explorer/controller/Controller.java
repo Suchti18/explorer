@@ -2,6 +2,7 @@ package de.nils.explorer.controller;
 
 import com.formdev.flatlaf.extras.FlatSVGIcon;
 import de.nils.explorer.view.View;
+import de.nils.explorer.view.components.popup.CloseJPopupMenu;
 import de.nils.explorer.view.components.tables.FileName;
 import de.nils.explorer.view.components.tables.FileTableModel;
 
@@ -19,7 +20,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.Comparator;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -32,22 +33,18 @@ public class Controller
     private Path currPath;
     private Path previousPath;
 
+    private Comparator<Path> filter;
+
     // Create new files popup menu
-    private final AtomicBoolean isNewPopupMenuOpen;
-    private final JPopupMenu newMenu;
     private final JMenuItem folderMenuItem;
     private final JMenuItem fileMenuItem;
 
     // Filter popup menu
-    private final AtomicBoolean isFilterMenuOpen;
-    private final JPopupMenu filterMenu;
     private final JMenuItem alphabeticalAZMenuItem;
     private final JMenuItem alphabeticalZAMenuItem;
     private final JMenuItem typeMenuItem;
 
     // More popup menu
-    private final AtomicBoolean isMoreMenuOpen;
-    private final JPopupMenu moreMenu;
     private final JMenuItem selectAllMenuItem;
     private final JMenuItem selectNoneMenuItem;
     private final JMenuItem invertSelectionMenuItem;
@@ -91,8 +88,7 @@ public class Controller
         currPath = Paths.get(".").toAbsolutePath().normalize();
 
         // New files popup menu
-        isNewPopupMenuOpen = new AtomicBoolean(false);
-        newMenu = new JPopupMenu();
+        JPopupMenu newMenu = new CloseJPopupMenu(view.getNewBtn());
 
         folderMenuItem = new JMenuItem("Folder");
         fileMenuItem = new JMenuItem("File");
@@ -104,8 +100,7 @@ public class Controller
         newMenu.add(fileMenuItem);
 
         // Filter popup menu
-        isFilterMenuOpen = new AtomicBoolean(false);
-        filterMenu = new JPopupMenu();
+        JPopupMenu filterMenu = new CloseJPopupMenu(view.getFilterBtn());
 
         alphabeticalAZMenuItem = new JMenuItem("Alphabetical (A-Z)");
         alphabeticalZAMenuItem = new JMenuItem("Alphabetical (Z-A)");
@@ -120,8 +115,7 @@ public class Controller
         filterMenu.add(typeMenuItem);
 
         // More popup menu
-        isMoreMenuOpen = new AtomicBoolean(false);
-        moreMenu = new JPopupMenu();
+        JPopupMenu moreMenu = new CloseJPopupMenu(view.getMoreBtn());
 
         selectAllMenuItem = new JMenuItem("Select All");
         selectNoneMenuItem = new JMenuItem("Select None");
@@ -152,7 +146,8 @@ public class Controller
              * @param e
              */
             @Override
-            public void mousePressed(MouseEvent e) {
+            public void mousePressed(MouseEvent e)
+            {
                 if(e.getClickCount() % 2 == 0
                         && view.getTable().getSelectedRow() != -1
                         && view.getTable().rowAtPoint(e.getPoint()) != 1)
@@ -271,22 +266,8 @@ public class Controller
 
     private void addLowerPanelBtnFunctionality()
     {
-        view.getNewBtn().addActionListener(e ->
-        {
-            if(isNewPopupMenuOpen.get())
-            {
-                isNewPopupMenuOpen.set(false);
-            }
-            else
-            {
-                newMenu.show(view.getNewBtn(), 0, view.getNewBtn().getHeight());
-                isNewPopupMenuOpen.set(true);
-            }
-        });
-
         folderMenuItem.addActionListener(e ->
         {
-            isNewPopupMenuOpen.set(false);
             Object[] data = {new FileName(folderImg, ""), "", "Directory", "0 Bytes"};
             ((DefaultTableModel) view.getTable().getModel()).addRow(data);
 
@@ -321,7 +302,6 @@ public class Controller
 
         fileMenuItem.addActionListener(e ->
         {
-            isNewPopupMenuOpen.set(false);
             Object[] data = {new FileName(fileImg, ""), "", "File", "0 Bytes"};
             ((DefaultTableModel) view.getTable().getModel()).addRow(data);
 
@@ -388,6 +368,11 @@ public class Controller
             });
         });
 
+        view.getShareBtn().addActionListener(e ->
+        {
+
+        });
+
         view.getTrashBtn().addActionListener(e ->
         {
             int row = view.getTable().getSelectionModel().getLeadSelectionIndex();
@@ -408,29 +393,36 @@ public class Controller
             listDirectoryContent();
         });
 
-        view.getFilterBtn().addActionListener(e ->
+        alphabeticalAZMenuItem.addActionListener(e ->
         {
-            if(isFilterMenuOpen.get())
-            {
-                isFilterMenuOpen.set(false);
-            }
-            else
-            {
-                filterMenu.show(view.getFilterBtn(), 0, view.getFilterBtn().getHeight());
-                isFilterMenuOpen.set(true);
-            }
+            filter = null;
+            listDirectoryContent();
         });
 
-        view.getMoreBtn().addActionListener(e ->
+        alphabeticalZAMenuItem.addActionListener(e ->
         {
-            if(isMoreMenuOpen.get())
+            filter = Comparator.comparing(Path::getFileName).reversed();
+            listDirectoryContent();
+        });
+
+        typeMenuItem.addActionListener(e ->
+        {
+            filter = (o1, o2) -> Files.isDirectory(o1) && Files.isDirectory(o2) ? 0 : Files.isDirectory(o1) ? -1 : 1;
+            listDirectoryContent();
+        });
+
+        selectAllMenuItem.addActionListener(e -> view.getTable().selectAll());
+
+        selectNoneMenuItem.addActionListener(e -> view.getTable().clearSelection());
+
+        invertSelectionMenuItem.addActionListener(e ->
+        {
+            int[] gotSelected = view.getTable().getSelectedRows();
+            view.getTable().selectAll();
+
+            for(int i : gotSelected)
             {
-                isMoreMenuOpen.set(false);
-            }
-            else
-            {
-                moreMenu.show(view.getMoreBtn(), 0, view.getMoreBtn().getHeight());
-                isMoreMenuOpen.set(true);
+                view.getTable().removeRowSelectionInterval(i, i);
             }
         });
     }
@@ -442,42 +434,24 @@ public class Controller
 
         AtomicInteger count = new AtomicInteger();
 
-        try(Stream<Path> files = Files.list(currPath)) {
-            files.forEach(path ->
+        try(Stream<Path> files = Files.list(currPath))
+        {
+            if(filter != null)
             {
-                if(Files.exists(path))
+                files.sorted(filter).forEach(path ->
                 {
-                    try
-                    {
-                        Image img;
-                        String type;
-                        if(Files.isDirectory(path))
-                        {
-                            img = folderImg;
-                            type = "Directory";
-                        }
-                        else
-                        {
-                            img = fileImg;
-                            type = "File";
-                        }
-
-                        String modifiedDate = LocalDateTime.ofInstant(
-                                Files.getLastModifiedTime(path).toInstant(),
-                                ZonedDateTime.now().getZone()).format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
-
-                        String fileSize = Files.size(path) + " Bytes";
-
-                        Object[] data = {new FileName(img, path.getFileName().toString()), modifiedDate, type, fileSize};
-                        ((DefaultTableModel) view.getTable().getModel()).addRow(data);
-                        count.getAndIncrement();
-                    }
-                    catch (IOException e)
-                    {
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
+                    addSingleRow(path);
+                    count.getAndIncrement();
+                });
+            }
+            else
+            {
+                files.forEach(path ->
+                {
+                    addSingleRow(path);
+                    count.getAndIncrement();
+                });
+            }
         }
         catch (IOException e)
         {
@@ -490,6 +464,41 @@ public class Controller
         view.getPathLabel().setText(currPath.toAbsolutePath().normalize().toString());
         // Clear selection to prevent auto-selecting the first row
         SwingUtilities.invokeLater(() -> view.getTable().clearSelection());
+    }
+
+    private void addSingleRow(Path path)
+    {
+        if(Files.exists(path))
+        {
+            try
+            {
+                Image img;
+                String type;
+                if(Files.isDirectory(path))
+                {
+                    img = folderImg;
+                    type = "Directory";
+                }
+                else
+                {
+                    img = fileImg;
+                    type = "File";
+                }
+
+                String modifiedDate = LocalDateTime.ofInstant(
+                        Files.getLastModifiedTime(path).toInstant(),
+                        ZonedDateTime.now().getZone()).format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+
+                String fileSize = Files.size(path) + " Bytes";
+
+                Object[] data = {new FileName(img, path.getFileName().toString()), modifiedDate, type, fileSize};
+                ((DefaultTableModel) view.getTable().getModel()).addRow(data);
+            }
+            catch (IOException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
     }
 
     private void allowCellEditing(int row, CellEditorListener cellEditorListener)
