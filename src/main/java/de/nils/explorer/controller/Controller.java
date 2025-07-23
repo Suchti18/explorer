@@ -1,6 +1,7 @@
 package de.nils.explorer.controller;
 
-import com.formdev.flatlaf.extras.FlatSVGIcon;
+import de.nils.explorer.common.Const;
+import de.nils.explorer.view.GuiResources;
 import de.nils.explorer.view.View;
 import de.nils.explorer.view.components.popup.CloseJPopupMenu;
 import de.nils.explorer.view.components.tables.FileName;
@@ -51,38 +52,9 @@ public class Controller
 
     public Controller(View view)
     {
-        Image alphabeticalAZImg;
-        Image alphabeticalZAImg;
-        Image typeImg;
-        Image selectAllImg;
-        Image selectNoneImg;
-        Image invertSelectionImg;
-        FlatSVGIcon svg;
-        try
-        {
-            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/folder.svg"));
-            folderImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
-            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/file.svg"));
-            fileImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
 
-            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/alphabetical-az.svg"));
-            alphabeticalAZImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
-            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/alphabetical-za.svg"));
-            alphabeticalZAImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
-            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/type.svg"));
-            typeImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
-
-            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/select-all.svg"));
-            selectAllImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
-            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/select-none.svg"));
-            selectNoneImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
-            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/invert.svg"));
-            invertSelectionImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
+        folderImg = GuiResources.loadImage(Const.FOLDER_SVG, 16, 16);
+        fileImg = GuiResources.loadImage(Const.FILE_SVG, 16, 16);
 
         this.view = view;
         currPath = Paths.get(".").toAbsolutePath().normalize();
@@ -106,9 +78,9 @@ public class Controller
         alphabeticalZAMenuItem = new JMenuItem("Alphabetical (Z-A)");
         typeMenuItem = new JMenuItem("Type");
 
-        alphabeticalAZMenuItem.setIcon(new ImageIcon(alphabeticalAZImg));
-        alphabeticalZAMenuItem.setIcon(new ImageIcon(alphabeticalZAImg));
-        typeMenuItem.setIcon(new ImageIcon(typeImg));
+        alphabeticalAZMenuItem.setIcon(GuiResources.loadImageIcon(Const.ALPHABETICAL_AZ_SVG, 16, 16));
+        alphabeticalZAMenuItem.setIcon(GuiResources.loadImageIcon(Const.ALPHABETICAL_ZA_SVG, 16, 16));
+        typeMenuItem.setIcon(GuiResources.loadImageIcon(Const.TYPE_SVG, 16, 16));
 
         filterMenu.add(alphabeticalAZMenuItem);
         filterMenu.add(alphabeticalZAMenuItem);
@@ -121,9 +93,9 @@ public class Controller
         selectNoneMenuItem = new JMenuItem("Select None");
         invertSelectionMenuItem = new JMenuItem("Invert Selection");
 
-        selectAllMenuItem.setIcon(new ImageIcon(selectAllImg));
-        selectNoneMenuItem.setIcon(new ImageIcon(selectNoneImg));
-        invertSelectionMenuItem.setIcon(new ImageIcon(invertSelectionImg));
+        selectAllMenuItem.setIcon(GuiResources.loadImageIcon(Const.SELECT_ALL_SVG, 16, 16));
+        selectNoneMenuItem.setIcon(GuiResources.loadImageIcon(Const.SELECT_NONE_SVG, 16, 16));
+        invertSelectionMenuItem.setIcon(GuiResources.loadImageIcon(Const.INVERT_SVG, 16, 16));
 
         moreMenu.add(selectAllMenuItem);
         moreMenu.add(selectNoneMenuItem);

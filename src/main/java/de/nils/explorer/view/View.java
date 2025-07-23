@@ -112,7 +112,7 @@ public class View
         lowerPanel.setBorder(new EmptyBorder(5, 8, 5, 5));
 
         newBtn = createMenuBtn(Const.NEW_SVG, 24, 24);
-        newBtn.setText("New");
+        newBtn.setText(Const.NEW_TEXT);
         newBtn.setPreferredSize(new Dimension(82 + 5, 24 + 5));
         newBtn.setMinimumSize(new Dimension(82 + 5, 24 + 5));
         renameBtn = createMenuBtn(Const.RENAME_SVG, 24, 24);
@@ -187,10 +187,10 @@ public class View
         JPanel infoPanel = new JPanel();
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.LINE_AXIS));
 
-        elementsLabel = new JLabel("");
+        elementsLabel = new JLabel(Const.EMPTY);
         elementsLabel.setBorder(new EmptyBorder(2, 5, 2, 0));
 
-        selectedElementsLabel = new JLabel("");
+        selectedElementsLabel = new JLabel(Const.EMPTY);
         selectedElementsLabel.setBorder(new EmptyBorder(2, 0, 2, 0));
 
         infoPanel.add(elementsLabel);
@@ -295,90 +295,56 @@ public class View
 
     private JButton createMenuBtn(String resourceName, int width, int height)
     {
-        try
-        {
-            FlatSVGIcon svg = new FlatSVGIcon(getClass().getResourceAsStream(resourceName));
-            JButton btn = new JButton();
-            btn.setIcon(new ImageIcon(svg.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH)));
-            btn.setFocusPainted(false);
-            btn.setBorderPainted(false);
-            btn.setOpaque(false);
-            btn.setBackground(Color.lightGray);
-            btn.setPreferredSize(new Dimension(width + 5, height + 5));
-            btn.setMinimumSize(new Dimension(width + 5, height + 5));
-            btn.addMouseListener(new MouseAdapter()
-            {
-                /**
-                 * {@inheritDoc}
-                 *
-                 * @param e
-                 */
-                @Override
-                public void mouseEntered(MouseEvent e)
-                {
-                    btn.setOpaque(true);
-                }
+        JButton btn = new JButton();
+        btn.setIcon(GuiResources.loadImageIcon(resourceName, width, height));
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setOpaque(false);
+        btn.setBackground(Color.lightGray);
+        btn.setPreferredSize(new Dimension(width + 5, height + 5));
+        btn.setMinimumSize(new Dimension(width + 5, height + 5));
+        btn.addMouseListener(createNewHoverEffectMouseAdapter(btn));
 
-                /**
-                 * {@inheritDoc}
-                 *
-                 * @param e
-                 */
-                @Override
-                public void mouseExited(MouseEvent e)
-                {
-                    btn.setOpaque(false);
-                }
-            });
-
-            return btn;
-        }
-        catch (IOException e)
-        {
-            throw new RuntimeException(e);
-        }
+        return btn;
     }
 
     private JButton createSidebarBtn(String resourceName, String text)
     {
-        try
-        {
-            FlatSVGIcon svg = new FlatSVGIcon(getClass().getResourceAsStream(resourceName));
-            JButton btn = new JButton(text);
-            btn.setIcon(new ImageIcon(svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH)));
-            btn.setFocusPainted(false);
-            btn.setBorderPainted(false);
-            btn.setOpaque(false);
-            btn.setBackground(Color.lightGray);
-            btn.addMouseListener(new MouseAdapter()
-            {
-                /**
-                 * {@inheritDoc}
-                 *
-                 * @param e
-                 */
-                @Override
-                public void mouseEntered(MouseEvent e) {
-                    btn.setOpaque(true);
-                }
+        JButton btn = new JButton(text);
+        btn.setIcon(GuiResources.loadImageIcon(resourceName, 16, 16));
+        btn.setFocusPainted(false);
+        btn.setBorderPainted(false);
+        btn.setOpaque(false);
+        btn.setBackground(Color.lightGray);
+        btn.addMouseListener(createNewHoverEffectMouseAdapter(btn));
 
-                /**
-                 * {@inheritDoc}
-                 *
-                 * @param e
-                 */
-                @Override
-                public void mouseExited(MouseEvent e) {
-                    btn.setOpaque(false);
-                }
-            });
+        return btn;
+    }
 
-            return btn;
-        }
-        catch (IOException e)
+    private MouseAdapter createNewHoverEffectMouseAdapter(JButton btn)
+    {
+        return new MouseAdapter()
         {
-            throw new RuntimeException(e);
-        }
+            /**
+             * {@inheritDoc}
+             *
+             * @param e
+             */
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btn.setOpaque(true);
+            }
+
+            /**
+             * {@inheritDoc}
+             *
+             * @param e
+             */
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btn.setOpaque(false);
+            }
+        };
     }
 
     private JSeparator createSeparator(int orientation, Color color, int width, int height)
