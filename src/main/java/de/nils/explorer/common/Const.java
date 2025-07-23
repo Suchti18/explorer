@@ -9,6 +9,8 @@ public class Const
 
     public final static String[] COLUMN_NAMES = { "Name", "Date modified", "Type", "Size"};
 
+    public final static String DATE_FORMAT = "dd.MM.yyyy HH:mm";
+
     // PNGs
     public final static String EXPLORER_ICON = "/icons/256-explorer.png";
 
@@ -31,7 +33,6 @@ public class Const
     public final static String VIDEO_SVG = "/images/video.svg";
     public final static String COMPUTER_SVG = "/images/computer.svg";
     public final static String NETWORK_SVG = "/images/network.svg";
-
     public final static String FOLDER_SVG = "/images/folder.svg";
     public final static String FILE_SVG = "/images/file.svg";
     public final static String ALPHABETICAL_AZ_SVG = "/images/alphabetical-az.svg";

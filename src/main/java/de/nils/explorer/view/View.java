@@ -1,6 +1,5 @@
 package de.nils.explorer.view;
 
-import com.formdev.flatlaf.extras.FlatSVGIcon;
 import de.nils.explorer.common.Const;
 import de.nils.explorer.view.components.scrollpane.ScrollPaneWin11;
 import de.nils.explorer.view.components.tables.FileNameTableCellEditor;
@@ -14,9 +13,10 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class View
@@ -40,8 +40,14 @@ public class View
     private final JButton filterBtn;
     private final JButton moreBtn;
 
+    // Sidebar
+    private final List<JButton> sidebarPins;
+    private final JButton thisPC;
+    private final JButton network;
+
     public View()
     {
+        sidebarPins = new ArrayList<>();
         JFrame frame = new JFrame(Const.WINDOW_TITLE);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
@@ -66,10 +72,10 @@ public class View
         upperPanel.setLayout(new BoxLayout(upperPanel, BoxLayout.LINE_AXIS));
         upperPanel.setBorder(new EmptyBorder(5, 8, 5, 5));
 
-        backBtn = createMenuBtn(Const.LEFT_ARROW_SVG, 24, 24);
-        nextBtn = createMenuBtn(Const.RIGHT_ARROW_SVG, 24, 24);
-        topBtn = createMenuBtn(Const.TOP_ARROW_SVG, 24, 24);
-        refreshBtn = createMenuBtn(Const.REFRESH_SVG, 24, 24);
+        backBtn = createMenuBtn(Const.LEFT_ARROW_SVG);
+        nextBtn = createMenuBtn(Const.RIGHT_ARROW_SVG);
+        topBtn = createMenuBtn(Const.TOP_ARROW_SVG);
+        refreshBtn = createMenuBtn(Const.REFRESH_SVG);
 
         pathLabel = new JLabel();
         JPanel pathPanel = new JPanel()
@@ -111,19 +117,19 @@ public class View
         lowerPanel.setLayout(new BoxLayout(lowerPanel, BoxLayout.LINE_AXIS));
         lowerPanel.setBorder(new EmptyBorder(5, 8, 5, 5));
 
-        newBtn = createMenuBtn(Const.NEW_SVG, 24, 24);
+        newBtn = createMenuBtn(Const.NEW_SVG);
         newBtn.setText(Const.NEW_TEXT);
         newBtn.setPreferredSize(new Dimension(82 + 5, 24 + 5));
         newBtn.setMinimumSize(new Dimension(82 + 5, 24 + 5));
-        renameBtn = createMenuBtn(Const.RENAME_SVG, 24, 24);
-        shareBtn = createMenuBtn(Const.SHARE_SVG, 24, 24);
-        trashBtn = createMenuBtn(Const.TRASH_SVG, 24, 24);
-        filterBtn = createMenuBtn(Const.FILTER_SVG, 24, 24);
-        moreBtn = createMenuBtn(Const.MORE_SVG, 24, 24);
+        renameBtn = createMenuBtn(Const.RENAME_SVG);
+        shareBtn = createMenuBtn(Const.SHARE_SVG);
+        trashBtn = createMenuBtn(Const.TRASH_SVG);
+        filterBtn = createMenuBtn(Const.FILTER_SVG);
+        moreBtn = createMenuBtn(Const.MORE_SVG);
 
         lowerPanel.add(newBtn);
         lowerPanel.add(Box.createHorizontalStrut(10));
-        lowerPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 1, 24));
+        lowerPanel.add(createSeparator(JSeparator.VERTICAL, 1, 24));
         lowerPanel.add(Box.createHorizontalStrut(10));
         lowerPanel.add(renameBtn);
         lowerPanel.add(Box.createHorizontalStrut(10));
@@ -131,19 +137,19 @@ public class View
         lowerPanel.add(Box.createHorizontalStrut(10));
         lowerPanel.add(trashBtn);
         lowerPanel.add(Box.createHorizontalStrut(10));
-        lowerPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 1, 24));
+        lowerPanel.add(createSeparator(JSeparator.VERTICAL, 1, 24));
         lowerPanel.add(Box.createHorizontalStrut(10));
         lowerPanel.add(filterBtn);
         lowerPanel.add(Box.createHorizontalStrut(10));
-        lowerPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 1, 24));
+        lowerPanel.add(createSeparator(JSeparator.VERTICAL, 1, 24));
         lowerPanel.add(Box.createHorizontalStrut(10));
         lowerPanel.add(moreBtn);
         lowerPanel.add(Box.createHorizontalGlue());
 
         mainPanel.add(upperPanel);
-        mainPanel.add(createSeparator(JSeparator.HORIZONTAL, Color.black, 0, 0));
+        mainPanel.add(createSeparator(JSeparator.HORIZONTAL, 0, 0));
         mainPanel.add(lowerPanel);
-        mainPanel.add(createSeparator(JSeparator.HORIZONTAL, Color.black, 0, 0));
+        mainPanel.add(createSeparator(JSeparator.HORIZONTAL, 0, 0));
 
         frame.add(mainPanel, BorderLayout.NORTH);
 
@@ -152,19 +158,28 @@ public class View
 
         JPanel sideBar =  new JPanel();
         sideBar.setLayout(new BoxLayout(sideBar, BoxLayout.PAGE_AXIS));
-        sideBar.setBorder(new EmptyBorder(0, 5, 0, 5));
+        sideBar.setBorder(new EmptyBorder(5, 5, 0, 5));
 
-        sideBar.add(createSidebarBtn(Const.DESKTOP_SVG, "Desktop"));
-        sideBar.add(createSidebarBtn(Const.DOWNLOAD_SVG, "Downloads"));
-        sideBar.add(createSidebarBtn(Const.DOCUMENT_SVG, "Documents"));
-        sideBar.add(createSidebarBtn(Const.PICTURE_SVG, "Pictures"));
-        sideBar.add(createSidebarBtn(Const.MUSIC_SVG, "Music"));
-        sideBar.add(createSidebarBtn(Const.VIDEO_SVG, "Videos"));
+        sidebarPins.add(createSidebarBtn(Const.DESKTOP_SVG, "Desktop"));
+        sidebarPins.add(createSidebarBtn(Const.DOWNLOAD_SVG, "Downloads"));
+        sidebarPins.add(createSidebarBtn(Const.DOCUMENT_SVG, "Documents"));
+        sidebarPins.add(createSidebarBtn(Const.PICTURE_SVG, "Pictures"));
+        sidebarPins.add(createSidebarBtn(Const.MUSIC_SVG, "Music"));
+        sidebarPins.add(createSidebarBtn(Const.VIDEO_SVG, "Videos"));
+
+        thisPC = createSidebarBtn(Const.COMPUTER_SVG, "This PC");
+        network = createSidebarBtn(Const.NETWORK_SVG, "Network");
+
+        for(JButton sidebarBtn : sidebarPins)
+        {
+            sideBar.add(sidebarBtn);
+        }
+
         sideBar.add(Box.createVerticalStrut(10));
-        sideBar.add(createSeparator(JSeparator.HORIZONTAL, Color.black, Integer.MAX_VALUE, 1));
+        sideBar.add(createSeparator(JSeparator.HORIZONTAL, Integer.MAX_VALUE, 1));
         sideBar.add(Box.createVerticalStrut(10));
-        sideBar.add(createSidebarBtn(Const.COMPUTER_SVG, "This PC"));
-        sideBar.add(createSidebarBtn(Const.NETWORK_SVG, "Network"));
+        sideBar.add(thisPC);
+        sideBar.add(network);
         sideBar.add(Box.createVerticalGlue());
 
         JScrollPane list = new ScrollPaneWin11();
@@ -173,7 +188,7 @@ public class View
         list.setPreferredSize(new Dimension(175, 100));
         list.setBorder(BorderFactory.createEmptyBorder());
 
-        JSeparator sideBarSeparator = createSeparator(JSeparator.VERTICAL, Color.black, 0, 0);
+        JSeparator sideBarSeparator = createSeparator(JSeparator.VERTICAL, 0, 0);
 
         ListDragListener listDragListener = new ListDragListener(list, frame, sideBarSeparator);
         sideBarSeparator.addMouseListener(listDragListener);
@@ -195,7 +210,7 @@ public class View
 
         infoPanel.add(elementsLabel);
         infoPanel.add(Box.createHorizontalStrut(5));
-        infoPanel.add(createSeparator(JSeparator.VERTICAL, Color.black, 1, 12));
+        infoPanel.add(createSeparator(JSeparator.VERTICAL, 1, 12));
         infoPanel.add(Box.createHorizontalStrut(5));
         infoPanel.add(selectedElementsLabel);
 
@@ -293,16 +308,31 @@ public class View
         return moreBtn;
     }
 
-    private JButton createMenuBtn(String resourceName, int width, int height)
+    public List<JButton> getSidebarPins()
+    {
+        return sidebarPins;
+    }
+
+    public JButton getThisPC()
+    {
+        return thisPC;
+    }
+
+    public JButton getNetwork()
+    {
+        return network;
+    }
+
+    private JButton createMenuBtn(String resourceName)
     {
         JButton btn = new JButton();
-        btn.setIcon(GuiResources.loadImageIcon(resourceName, width, height));
+        btn.setIcon(GuiResources.loadImageIcon(resourceName, 24, 24));
         btn.setFocusPainted(false);
         btn.setBorderPainted(false);
         btn.setOpaque(false);
         btn.setBackground(Color.lightGray);
-        btn.setPreferredSize(new Dimension(width + 5, height + 5));
-        btn.setMinimumSize(new Dimension(width + 5, height + 5));
+        btn.setPreferredSize(new Dimension(24 + 5, 24 + 5));
+        btn.setMinimumSize(new Dimension(24 + 5, 24 + 5));
         btn.addMouseListener(createNewHoverEffectMouseAdapter(btn));
 
         return btn;
@@ -347,7 +377,7 @@ public class View
         };
     }
 
-    private JSeparator createSeparator(int orientation, Color color, int width, int height)
+    private JSeparator createSeparator(int orientation, int width, int height)
     {
         JSeparator separator = new JSeparator(orientation);
 
@@ -356,7 +386,7 @@ public class View
             separator.setMaximumSize(new Dimension(width, height));
         }
 
-        separator.setForeground(color);
+        separator.setForeground(Color.black);
 
         return separator;
     }

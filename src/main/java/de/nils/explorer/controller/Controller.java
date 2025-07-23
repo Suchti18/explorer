@@ -107,6 +107,7 @@ public class Controller
         addSelectedLabelFunctionality();
         addUpperPanelBtnFunctionality();
         addLowerPanelBtnFunctionality();
+        addSidebarPinsFunctionality();
     }
 
     private void addDoubleClickOnTableFunctionality()
@@ -240,7 +241,7 @@ public class Controller
     {
         folderMenuItem.addActionListener(e ->
         {
-            Object[] data = {new FileName(folderImg, ""), "", "Directory", "0 Bytes"};
+            Object[] data = {new FileName(folderImg, Const.EMPTY), Const.EMPTY, "Directory", "0 Bytes"};
             ((DefaultTableModel) view.getTable().getModel()).addRow(data);
 
             int lastRow = view.getTable().getRowCount() - 1;
@@ -274,7 +275,7 @@ public class Controller
 
         fileMenuItem.addActionListener(e ->
         {
-            Object[] data = {new FileName(fileImg, ""), "", "File", "0 Bytes"};
+            Object[] data = {new FileName(fileImg, Const.EMPTY), Const.EMPTY, "File", "0 Bytes"};
             ((DefaultTableModel) view.getTable().getModel()).addRow(data);
 
             int lastRow = view.getTable().getRowCount() - 1;
@@ -399,6 +400,35 @@ public class Controller
         });
     }
 
+    private void addSidebarPinsFunctionality()
+    {
+        for(JButton sidebarPin : view.getSidebarPins())
+        {
+            Path userhome = Paths.get(System.getProperty("user.home"));
+            Path dest = userhome.resolve(sidebarPin.getText());
+
+            if(Files.exists(dest))
+            {
+                sidebarPin.addActionListener(e ->
+                {
+                    if (Files.exists(dest))
+                    {
+                        currPath = dest;
+                        listDirectoryContent();
+                    }
+                    else
+                    {
+                        createErrorOptionPane("Not found: " + dest);
+                    }
+                });
+            }
+            else
+            {
+                sidebarPin.getParent().remove(sidebarPin);
+            }
+        }
+    }
+
     private void listDirectoryContent()
     {
         // Clear table
@@ -459,7 +489,7 @@ public class Controller
 
                 String modifiedDate = LocalDateTime.ofInstant(
                         Files.getLastModifiedTime(path).toInstant(),
-                        ZonedDateTime.now().getZone()).format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
+                        ZonedDateTime.now().getZone()).format(DateTimeFormatter.ofPattern(Const.DATE_FORMAT));
 
                 String fileSize = Files.size(path) + " Bytes";
 
