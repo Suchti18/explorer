@@ -41,6 +41,7 @@ public class View
     private final JButton moreBtn;
 
     // Sidebar
+    private final JPanel sideBar;
     private final List<JButton> sidebarPins;
     private final JButton thisPC;
     private final JButton network;
@@ -156,7 +157,7 @@ public class View
         JPanel sideNavBar = new JPanel();
         sideNavBar.setLayout(new BoxLayout(sideNavBar, BoxLayout.LINE_AXIS));
 
-        JPanel sideBar =  new JPanel();
+        sideBar =  new JPanel();
         sideBar.setLayout(new BoxLayout(sideBar, BoxLayout.PAGE_AXIS));
         sideBar.setBorder(new EmptyBorder(5, 5, 0, 5));
 
@@ -308,6 +309,11 @@ public class View
         return moreBtn;
     }
 
+    public JPanel getSideBar()
+    {
+        return sideBar;
+    }
+
     public List<JButton> getSidebarPins()
     {
         return sidebarPins;
@@ -338,7 +344,7 @@ public class View
         return btn;
     }
 
-    private JButton createSidebarBtn(String resourceName, String text)
+    public JButton createSidebarBtn(String resourceName, String text)
     {
         JButton btn = new JButton(text);
         btn.setIcon(GuiResources.loadImageIcon(resourceName, 16, 16));

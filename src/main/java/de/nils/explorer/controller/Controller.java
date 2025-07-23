@@ -49,6 +49,7 @@ public class Controller
     private final JMenuItem selectAllMenuItem;
     private final JMenuItem selectNoneMenuItem;
     private final JMenuItem invertSelectionMenuItem;
+    private final JMenuItem addToSidebarMenuItem;
 
     public Controller(View view)
     {
@@ -92,14 +93,18 @@ public class Controller
         selectAllMenuItem = new JMenuItem("Select All");
         selectNoneMenuItem = new JMenuItem("Select None");
         invertSelectionMenuItem = new JMenuItem("Invert Selection");
+        addToSidebarMenuItem = new JMenuItem("Add To Sidebar");
 
         selectAllMenuItem.setIcon(GuiResources.loadImageIcon(Const.SELECT_ALL_SVG, 16, 16));
         selectNoneMenuItem.setIcon(GuiResources.loadImageIcon(Const.SELECT_NONE_SVG, 16, 16));
         invertSelectionMenuItem.setIcon(GuiResources.loadImageIcon(Const.INVERT_SVG, 16, 16));
+        addToSidebarMenuItem.setIcon(GuiResources.loadImageIcon(Const.ADD_SVG, 16, 16));
 
         moreMenu.add(selectAllMenuItem);
         moreMenu.add(selectNoneMenuItem);
         moreMenu.add(invertSelectionMenuItem);
+        moreMenu.addSeparator();
+        moreMenu.add(addToSidebarMenuItem);
 
         listDirectoryContent();
 
@@ -398,6 +403,38 @@ public class Controller
                 view.getTable().removeRowSelectionInterval(i, i);
             }
         });
+
+        addToSidebarMenuItem.addActionListener(e ->
+        {
+            for(int i = 0; i < view.getSideBar().getComponentCount(); i++)
+            {
+                if(view.getSideBar().getComponent(i) instanceof JSeparator)
+                {
+                    JButton btn = view.createSidebarBtn(Const.PIN_SVG, currPath.toString());
+
+                    Path dest = Paths.get(btn.getText());
+
+                    btn.addActionListener(ae ->
+                    {
+                        if (Files.exists(dest))
+                        {
+                            currPath = dest;
+                            listDirectoryContent();
+                        }
+                        else
+                        {
+                            createErrorOptionPane("Not found: " + dest);
+                        }
+                    });
+
+                    view.getSideBar().add(btn, i - 1);
+                    break;
+                }
+            }
+
+            view.getSideBar().invalidate();
+            view.getSideBar().revalidate();
+        });
     }
 
     private void addSidebarPinsFunctionality()
@@ -424,7 +461,7 @@ public class Controller
             }
             else
             {
-                sidebarPin.getParent().remove(sidebarPin);
+                view.getSideBar().remove(sidebarPin);
             }
         }
     }

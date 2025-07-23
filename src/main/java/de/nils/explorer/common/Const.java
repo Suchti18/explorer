@@ -41,4 +41,6 @@ public class Const
     public final static String SELECT_ALL_SVG = "/images/select-all.svg";
     public final static String SELECT_NONE_SVG = "/images/select-none.svg";
     public final static String INVERT_SVG = "/images/invert.svg";
+    public final static String ADD_SVG = "/images/add.svg";
+    public final static String PIN_SVG = "/images/pin.svg";
 }
