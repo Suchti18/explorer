@@ -34,6 +34,8 @@ public class Controller
 
     private final AtomicBoolean isNewPopupMenuOpen;
     private final JPopupMenu newMenu;
+    private final JMenuItem folderMenuItem;
+    private final JMenuItem fileMenuItem;
 
     public Controller(View view)
     {
@@ -56,14 +58,11 @@ public class Controller
         isNewPopupMenuOpen = new AtomicBoolean(false);
         newMenu = new JPopupMenu();
 
-        JMenuItem folderMenuItem = new JMenuItem("Folder");
-        JMenuItem fileMenuItem = new JMenuItem("File");
+        folderMenuItem = new JMenuItem("Folder");
+        fileMenuItem = new JMenuItem("File");
 
         folderMenuItem.setIcon(new ImageIcon(folderImg));
         fileMenuItem.setIcon(new ImageIcon(fileImg));
-
-        folderMenuItem.addActionListener(e -> isNewPopupMenuOpen.set(false));
-        fileMenuItem.addActionListener(e -> isNewPopupMenuOpen.set(false));
 
         newMenu.add(folderMenuItem);
         newMenu.add(fileMenuItem);
@@ -217,6 +216,76 @@ public class Controller
             }
         });
 
+        folderMenuItem.addActionListener(e ->
+        {
+            isNewPopupMenuOpen.set(false);
+            Object[] data = {new FileName(folderImg, ""), "", "Directory", "0 Bytes"};
+            ((DefaultTableModel) view.getTable().getModel()).addRow(data);
+
+            int lastRow = view.getTable().getRowCount() - 1;
+            allowCellEditing(lastRow, new CellEditorListener()
+            {
+                @Override
+                public void editingStopped(ChangeEvent e)
+                {
+                    CellEditor cellEditor = (CellEditor) e.getSource();
+
+                    try
+                    {
+                        Files.createDirectory(currPath.resolve(cellEditor.getCellEditorValue().toString()));
+                    }
+                    catch (IOException ex)
+                    {
+                        createOptionPane("Folder already exists", "Error", JOptionPane.ERROR_MESSAGE);
+                        throw new RuntimeException(ex);
+                    }
+
+                    listDirectoryContent();
+                }
+
+                @Override
+                public void editingCanceled(ChangeEvent e)
+                {
+                    listDirectoryContent();
+                }
+            });
+        });
+
+        fileMenuItem.addActionListener(e ->
+        {
+            isNewPopupMenuOpen.set(false);
+            Object[] data = {new FileName(fileImg, ""), "", "File", "0 Bytes"};
+            ((DefaultTableModel) view.getTable().getModel()).addRow(data);
+
+            int lastRow = view.getTable().getRowCount() - 1;
+            allowCellEditing(lastRow, new CellEditorListener()
+            {
+                @Override
+                public void editingStopped(ChangeEvent e)
+                {
+                    CellEditor cellEditor = (CellEditor) e.getSource();
+
+                    try
+                    {
+                        Files.createFile(currPath.resolve(cellEditor.getCellEditorValue().toString()));
+                    }
+                    catch (IOException ex)
+                    {
+                        createOptionPane("File already exists", "Error", JOptionPane.ERROR_MESSAGE);
+                        throw new RuntimeException(ex);
+                    }
+
+                    listDirectoryContent();
+                }
+
+                @Override
+                public void editingCanceled(ChangeEvent e)
+                {
+                    listDirectoryContent();
+                }
+            });
+        });
+
         view.getRenameBtn().addActionListener(e ->
         {
             int row = view.getTable().getSelectionModel().getLeadSelectionIndex();
@@ -225,11 +294,8 @@ public class Controller
 
             view.getTable().getSelectionModel().clearSelection();
 
-            ((FileTableModel) view.getTable().getModel()).setEditableRow(row);
-            view.getTable().editCellAt(row, 0);
-            ((FileTableModel) view.getTable().getModel()).clearEditableRow();
-
-            view.getTable().getCellEditor(row, 0).addCellEditorListener(new CellEditorListener() {
+            allowCellEditing(row, new CellEditorListener()
+            {
                 @Override
                 public void editingStopped(ChangeEvent e)
                 {
@@ -253,9 +319,29 @@ public class Controller
                 }
             });
         });
+
+        view.getTrashBtn().addActionListener(e ->
+        {
+            int row = view.getTable().getSelectionModel().getLeadSelectionIndex();
+            Path src = currPath.resolve(view.getTable().getValueAt(row, 0).toString());
+
+            try
+            {
+                if(!Files.deleteIfExists(src))
+                {
+                    //TODO: File was not deleted
+                }
+            }
+            catch (IOException ex)
+            {
+                throw new RuntimeException(ex);
+            }
+
+            listDirectoryContent();
+        });
     }
 
-    public void listDirectoryContent()
+    private void listDirectoryContent()
     {
         // Clear table
         ((DefaultTableModel) view.getTable().getModel()).setRowCount(0);
@@ -310,5 +396,19 @@ public class Controller
         view.getPathLabel().setText(currPath.toAbsolutePath().normalize().toString());
         // Clear selection to prevent auto-selecting the first row
         SwingUtilities.invokeLater(() -> view.getTable().clearSelection());
+    }
+
+    private void allowCellEditing(int row, CellEditorListener cellEditorListener)
+    {
+        ((FileTableModel) view.getTable().getModel()).setEditableRow(row);
+        view.getTable().editCellAt(row, 0);
+        ((FileTableModel) view.getTable().getModel()).clearEditableRow();
+
+        view.getTable().getCellEditor(row, 0).addCellEditorListener(cellEditorListener);
+    }
+
+    private void createOptionPane(String text, String title, int jOption)
+    {
+        JOptionPane.showMessageDialog(view.getTable(), text, title, jOption);
     }
 }
