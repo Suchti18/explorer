@@ -236,7 +236,7 @@ public class Controller
                     }
                     catch (IOException ex)
                     {
-                        createOptionPane("Folder already exists", "Error", JOptionPane.ERROR_MESSAGE);
+                        createErrorOptionPane("Folder already exists");
                         throw new RuntimeException(ex);
                     }
 
@@ -271,7 +271,7 @@ public class Controller
                     }
                     catch (IOException ex)
                     {
-                        createOptionPane("File already exists", "Error", JOptionPane.ERROR_MESSAGE);
+                        createErrorOptionPane("File already exists");
                         throw new RuntimeException(ex);
                     }
 
@@ -306,7 +306,7 @@ public class Controller
 
                     if(!success)
                     {
-                        //TODO: Send Notification that the file/folder was not renamed
+                        createErrorOptionPane("File was not renamed");
                     }
 
                     listDirectoryContent();
@@ -329,7 +329,7 @@ public class Controller
             {
                 if(!Files.deleteIfExists(src))
                 {
-                    //TODO: File was not deleted
+                    createErrorOptionPane("File was not deleted");
                 }
             }
             catch (IOException ex)
@@ -407,8 +407,8 @@ public class Controller
         view.getTable().getCellEditor(row, 0).addCellEditorListener(cellEditorListener);
     }
 
-    private void createOptionPane(String text, String title, int jOption)
+    private void createErrorOptionPane(String text)
     {
-        JOptionPane.showMessageDialog(view.getTable(), text, title, jOption);
+        JOptionPane.showMessageDialog(view.getTable(), text, "Error", JOptionPane.ERROR_MESSAGE);
     }
 }
