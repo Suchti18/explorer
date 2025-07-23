@@ -32,13 +32,34 @@ public class Controller
     private Path currPath;
     private Path previousPath;
 
+    // Create new files popup menu
     private final AtomicBoolean isNewPopupMenuOpen;
     private final JPopupMenu newMenu;
     private final JMenuItem folderMenuItem;
     private final JMenuItem fileMenuItem;
 
+    // Filter popup menu
+    private final AtomicBoolean isFilterMenuOpen;
+    private final JPopupMenu filterMenu;
+    private final JMenuItem alphabeticalAZMenuItem;
+    private final JMenuItem alphabeticalZAMenuItem;
+    private final JMenuItem typeMenuItem;
+
+    // More popup menu
+    private final AtomicBoolean isMoreMenuOpen;
+    private final JPopupMenu moreMenu;
+    private final JMenuItem selectAllMenuItem;
+    private final JMenuItem selectNoneMenuItem;
+    private final JMenuItem invertSelectionMenuItem;
+
     public Controller(View view)
     {
+        Image alphabeticalAZImg;
+        Image alphabeticalZAImg;
+        Image typeImg;
+        Image selectAllImg;
+        Image selectNoneImg;
+        Image invertSelectionImg;
         FlatSVGIcon svg;
         try
         {
@@ -46,6 +67,20 @@ public class Controller
             folderImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
             svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/file.svg"));
             fileImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+
+            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/alphabetical-az.svg"));
+            alphabeticalAZImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/alphabetical-za.svg"));
+            alphabeticalZAImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/type.svg"));
+            typeImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+
+            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/select-all.svg"));
+            selectAllImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/select-none.svg"));
+            selectNoneImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
+            svg = new FlatSVGIcon(getClass().getResourceAsStream("/images/invert.svg"));
+            invertSelectionImg = svg.getImage().getScaledInstance(16, 16, Image.SCALE_SMOOTH);
         }
         catch (IOException e)
         {
@@ -55,6 +90,7 @@ public class Controller
         this.view = view;
         currPath = Paths.get(".").toAbsolutePath().normalize();
 
+        // New files popup menu
         isNewPopupMenuOpen = new AtomicBoolean(false);
         newMenu = new JPopupMenu();
 
@@ -66,6 +102,38 @@ public class Controller
 
         newMenu.add(folderMenuItem);
         newMenu.add(fileMenuItem);
+
+        // Filter popup menu
+        isFilterMenuOpen = new AtomicBoolean(false);
+        filterMenu = new JPopupMenu();
+
+        alphabeticalAZMenuItem = new JMenuItem("Alphabetical (A-Z)");
+        alphabeticalZAMenuItem = new JMenuItem("Alphabetical (Z-A)");
+        typeMenuItem = new JMenuItem("Type");
+
+        alphabeticalAZMenuItem.setIcon(new ImageIcon(alphabeticalAZImg));
+        alphabeticalZAMenuItem.setIcon(new ImageIcon(alphabeticalZAImg));
+        typeMenuItem.setIcon(new ImageIcon(typeImg));
+
+        filterMenu.add(alphabeticalAZMenuItem);
+        filterMenu.add(alphabeticalZAMenuItem);
+        filterMenu.add(typeMenuItem);
+
+        // More popup menu
+        isMoreMenuOpen = new AtomicBoolean(false);
+        moreMenu = new JPopupMenu();
+
+        selectAllMenuItem = new JMenuItem("Select All");
+        selectNoneMenuItem = new JMenuItem("Select None");
+        invertSelectionMenuItem = new JMenuItem("Invert Selection");
+
+        selectAllMenuItem.setIcon(new ImageIcon(selectAllImg));
+        selectNoneMenuItem.setIcon(new ImageIcon(selectNoneImg));
+        invertSelectionMenuItem.setIcon(new ImageIcon(invertSelectionImg));
+
+        moreMenu.add(selectAllMenuItem);
+        moreMenu.add(selectNoneMenuItem);
+        moreMenu.add(invertSelectionMenuItem);
 
         listDirectoryContent();
 
@@ -338,6 +406,32 @@ public class Controller
             }
 
             listDirectoryContent();
+        });
+
+        view.getFilterBtn().addActionListener(e ->
+        {
+            if(isFilterMenuOpen.get())
+            {
+                isFilterMenuOpen.set(false);
+            }
+            else
+            {
+                filterMenu.show(view.getFilterBtn(), 0, view.getFilterBtn().getHeight());
+                isFilterMenuOpen.set(true);
+            }
+        });
+
+        view.getMoreBtn().addActionListener(e ->
+        {
+            if(isMoreMenuOpen.get())
+            {
+                isMoreMenuOpen.set(false);
+            }
+            else
+            {
+                moreMenu.show(view.getMoreBtn(), 0, view.getMoreBtn().getHeight());
+                isMoreMenuOpen.set(true);
+            }
         });
     }
 
