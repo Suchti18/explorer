@@ -1,6 +1,7 @@
 package de.nils.explorer.view;
 
 import de.nils.explorer.common.Const;
+import de.nils.explorer.view.components.roundedPanel;
 import de.nils.explorer.view.components.scrollpane.ScrollPaneWin11;
 import de.nils.explorer.view.components.tables.FileNameTableCellEditor;
 import de.nils.explorer.view.components.tables.FileNameTableCellRenderer;
@@ -70,33 +71,18 @@ public class View
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
 
         JPanel upperPanel = new JPanel();
+        upperPanel.setBackground(Color.white);
         upperPanel.setLayout(new BoxLayout(upperPanel, BoxLayout.LINE_AXIS));
         upperPanel.setBorder(new EmptyBorder(5, 8, 5, 5));
 
-        backBtn = createMenuBtn(Const.LEFT_ARROW_SVG);
-        nextBtn = createMenuBtn(Const.RIGHT_ARROW_SVG);
-        topBtn = createMenuBtn(Const.TOP_ARROW_SVG);
-        refreshBtn = createMenuBtn(Const.REFRESH_SVG);
+        backBtn = createMenuBtn(Const.LEFT_ARROW_SVG, "Back");
+        nextBtn = createMenuBtn(Const.RIGHT_ARROW_SVG, "Previous");
+        topBtn = createMenuBtn(Const.TOP_ARROW_SVG, "Go to the top");
+        refreshBtn = createMenuBtn(Const.REFRESH_SVG, "Refresh");
 
         pathLabel = new JLabel();
-        JPanel pathPanel = new JPanel()
-        {
-            @Override
-            protected void paintComponent(Graphics g)
-            {
-                super.paintComponent(g);
-                Dimension arcs = new Dimension(10,10);
-                int width = getWidth();
-                int height = getHeight();
-                Graphics2D graphics = (Graphics2D) g;
-                graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-                graphics.setColor(Color.lightGray);
-                graphics.fillRoundRect(0, 0, width-1, height-1, arcs.width, arcs.height);
-                graphics.setColor(getBackground());
-                graphics.drawRoundRect(0, 0, width-1, height-1, arcs.width, arcs.height);
-            }
-        };
+        JPanel pathPanel = new roundedPanel();
+        pathPanel.setBackground(Color.white);
 
         pathPanel.add(pathLabel);
 
@@ -115,18 +101,19 @@ public class View
         upperPanel.add(pathScrollPane);
 
         JPanel lowerPanel = new JPanel();
+        lowerPanel.setBackground(Color.white);
         lowerPanel.setLayout(new BoxLayout(lowerPanel, BoxLayout.LINE_AXIS));
         lowerPanel.setBorder(new EmptyBorder(5, 8, 5, 5));
 
-        newBtn = createMenuBtn(Const.NEW_SVG);
+        newBtn = createMenuBtn(Const.NEW_SVG, "Create new Files/Directories");
         newBtn.setText(Const.NEW_TEXT);
         newBtn.setPreferredSize(new Dimension(82 + 5, 24 + 5));
         newBtn.setMinimumSize(new Dimension(82 + 5, 24 + 5));
-        renameBtn = createMenuBtn(Const.RENAME_SVG);
-        shareBtn = createMenuBtn(Const.SHARE_SVG);
-        trashBtn = createMenuBtn(Const.TRASH_SVG);
-        filterBtn = createMenuBtn(Const.FILTER_SVG);
-        moreBtn = createMenuBtn(Const.MORE_SVG);
+        renameBtn = createMenuBtn(Const.RENAME_SVG, "Rename a selected file");
+        shareBtn = createMenuBtn(Const.SHARE_SVG, "Share a selected file");
+        trashBtn = createMenuBtn(Const.TRASH_SVG, "Delete selected files");
+        filterBtn = createMenuBtn(Const.FILTER_SVG, "Change the filter");
+        moreBtn = createMenuBtn(Const.MORE_SVG, "Show more options");
 
         lowerPanel.add(newBtn);
         lowerPanel.add(Box.createHorizontalStrut(10));
@@ -158,6 +145,7 @@ public class View
         sideNavBar.setLayout(new BoxLayout(sideNavBar, BoxLayout.LINE_AXIS));
 
         sideBar =  new JPanel();
+        sideBar.setBackground(Color.white);
         sideBar.setLayout(new BoxLayout(sideBar, BoxLayout.PAGE_AXIS));
         sideBar.setBorder(new EmptyBorder(5, 5, 0, 5));
 
@@ -201,6 +189,7 @@ public class View
         frame.add(sideNavBar, BorderLayout.WEST);
 
         JPanel infoPanel = new JPanel();
+        infoPanel.setBackground(Color.white);
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.LINE_AXIS));
 
         elementsLabel = new JLabel(Const.EMPTY);
@@ -329,7 +318,7 @@ public class View
         return network;
     }
 
-    private JButton createMenuBtn(String resourceName)
+    private JButton createMenuBtn(String resourceName, String toolTipText)
     {
         JButton btn = new JButton();
         btn.setIcon(GuiResources.loadImageIcon(resourceName, 24, 24));
@@ -337,6 +326,7 @@ public class View
         btn.setBorderPainted(false);
         btn.setOpaque(false);
         btn.setBackground(Color.lightGray);
+        btn.setToolTipText(toolTipText);
         btn.setPreferredSize(new Dimension(24 + 5, 24 + 5));
         btn.setMinimumSize(new Dimension(24 + 5, 24 + 5));
         btn.addMouseListener(createNewHoverEffectMouseAdapter(btn));
