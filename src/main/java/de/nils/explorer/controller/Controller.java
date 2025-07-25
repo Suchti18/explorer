@@ -6,6 +6,8 @@ import de.nils.explorer.view.View;
 import de.nils.explorer.view.components.popup.CloseJPopupMenu;
 import de.nils.explorer.view.components.tables.FileName;
 import de.nils.explorer.view.components.tables.FileTableModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.event.CellEditorListener;
@@ -14,6 +16,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,6 +30,8 @@ import java.util.stream.Stream;
 
 public class Controller
 {
+    private static final Logger log = LoggerFactory.getLogger(Controller.class);
+
     private final Image folderImg;
     private final Image fileImg;
 
@@ -128,7 +133,7 @@ public class Controller
             {
                 if(e.getClickCount() % 2 == 0
                         && view.getTable().getSelectedRow() != -1
-                        && view.getTable().rowAtPoint(e.getPoint()) != 1)
+                        && view.getTable().rowAtPoint(e.getPoint()) != -1)
                 {
                     String clickedItemName = view.getTable().getValueAt(view.getTable().getSelectedRow(), 0).toString();
                     if(Files.isDirectory(currPath.resolve(clickedItemName)))
@@ -504,17 +509,25 @@ public class Controller
 
         view.getThisPC().addActionListener(e ->
         {
-            //TODO
+            // Clear table
+            ((DefaultTableModel) view.getTable().getModel()).setRowCount(0);
+
+            for(File file : File.listRoots())
+            {
+                Object[] data = {new FileName(fileImg, file.toString()), "", "Drive", file.getTotalSpace()};
+                ((DefaultTableModel) view.getTable().getModel()).addRow(data);
+            }
+
+            currPath = Paths.get("");
         });
 
-        view.getNetwork().addActionListener(e ->
-        {
-            //TODO
-        });
+        view.getNetwork().addActionListener(e -> createErrorOptionPane("Work in progress"));
     }
 
     private void listDirectoryContent()
     {
+        log.trace("Showing contents of: <{}>",  currPath);
+
         // Clear table
         ((DefaultTableModel) view.getTable().getModel()).setRowCount(0);
 

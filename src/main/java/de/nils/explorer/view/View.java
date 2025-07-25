@@ -7,6 +7,8 @@ import de.nils.explorer.view.components.tables.FileNameTableCellEditor;
 import de.nils.explorer.view.components.tables.FileNameTableCellRenderer;
 import de.nils.explorer.view.components.listeners.ListDragListener;
 import de.nils.explorer.view.components.tables.FileTableModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
@@ -22,6 +24,8 @@ import java.util.Objects;
 
 public class View
 {
+    private static final Logger log = LoggerFactory.getLogger(View.class);
+
     private final JTable table;
     private final JLabel elementsLabel;
     private final JLabel selectedElementsLabel;
@@ -226,6 +230,8 @@ public class View
         frame.pack();
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
+
+        log.debug("View loaded");
     }
 
     public JTable getTable()
