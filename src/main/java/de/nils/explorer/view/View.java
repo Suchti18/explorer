@@ -110,7 +110,7 @@ public class View
         newBtn.setPreferredSize(new Dimension(82 + 5, 24 + 5));
         newBtn.setMinimumSize(new Dimension(82 + 5, 24 + 5));
         renameBtn = createMenuBtn(Const.RENAME_SVG, "Rename a selected file");
-        shareBtn = createMenuBtn(Const.SHARE_SVG, "Share a selected file");
+        shareBtn = createMenuBtn(Const.SHARE_SVG, "Share a selected file (Just opens your mail client)");
         trashBtn = createMenuBtn(Const.TRASH_SVG, "Delete selected files");
         filterBtn = createMenuBtn(Const.FILTER_SVG, "Change the filter");
         moreBtn = createMenuBtn(Const.MORE_SVG, "Show more options");

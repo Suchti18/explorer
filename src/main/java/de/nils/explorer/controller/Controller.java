@@ -348,7 +348,14 @@ public class Controller
 
         view.getShareBtn().addActionListener(e ->
         {
-
+            try
+            {
+                Desktop.getDesktop().mail();
+            }
+            catch (IOException ex)
+            {
+                throw new RuntimeException(ex);
+            }
         });
 
         view.getTrashBtn().addActionListener(e ->
