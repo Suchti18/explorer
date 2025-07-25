@@ -318,49 +318,58 @@ public class Controller
 
         view.getRenameBtn().addActionListener(e ->
         {
-            int row = view.getTable().getSelectionModel().getLeadSelectionIndex();
-            Object originalObject = view.getTable().getValueAt(row, 0);
-            Path src = currPath.resolve(originalObject.toString());
+            int row = view.getTable().getSelectionModel().getMaxSelectionIndex();
 
-            view.getTable().getSelectionModel().clearSelection();
-
-            allowCellEditing(row, new CellEditorListener()
+            if(row != -1)
             {
-                @Override
-                public void editingStopped(ChangeEvent e)
+                Object originalObject = view.getTable().getValueAt(row, 0);
+                Path src = currPath.resolve(originalObject.toString());
+
+                view.getTable().getSelectionModel().clearSelection();
+
+                allowCellEditing(row, new CellEditorListener()
                 {
-                    CellEditor cellEditor = (CellEditor) e.getSource();
-                    Path target = currPath.resolve(cellEditor.getCellEditorValue().toString());
-
-                    boolean success = src.toFile().renameTo(target.toFile());
-
-                    if(!success)
+                    @Override
+                    public void editingStopped(ChangeEvent e)
                     {
-                        createErrorOptionPane("File was not renamed");
+                        CellEditor cellEditor = (CellEditor) e.getSource();
+                        Path target = currPath.resolve(cellEditor.getCellEditorValue().toString());
+
+                        boolean success = src.toFile().renameTo(target.toFile());
+
+                        if(!success)
+                        {
+                            createErrorOptionPane("File was not renamed");
+                        }
+
+                        listDirectoryContent();
+                        ((CellEditor) e.getSource()).removeCellEditorListener(this);
                     }
 
-                    listDirectoryContent();
-                    ((CellEditor) e.getSource()).removeCellEditorListener(this);
-                }
-
-                @Override
-                public void editingCanceled(ChangeEvent e)
-                {
-                    listDirectoryContent();
-                    ((CellEditor) e.getSource()).removeCellEditorListener(this);
-                }
-            });
+                    @Override
+                    public void editingCanceled(ChangeEvent e)
+                    {
+                        listDirectoryContent();
+                        ((CellEditor) e.getSource()).removeCellEditorListener(this);
+                    }
+                });
+            }
+            else
+            {
+                createErrorOptionPane("No file selected");
+            }
         });
 
         view.getShareBtn().addActionListener(e ->
         {
             try
             {
+                // Open standard mail client
                 Desktop.getDesktop().mail();
             }
             catch (IOException ex)
             {
-                throw new RuntimeException(ex);
+                createErrorOptionPane("Cannot open a mail program");
             }
         });
 
@@ -410,6 +419,9 @@ public class Controller
 
         typeMenuItem.addActionListener(e ->
         {
+            // If both paths are directories => 0 => Equal
+            // Else if o1 is a directory => -1
+            // Else => 1
             filter = (o1, o2) -> Files.isDirectory(o1) && Files.isDirectory(o2) ? 0 : Files.isDirectory(o1) ? -1 : 1;
             listDirectoryContent();
         });
@@ -466,8 +478,8 @@ public class Controller
     {
         for(JButton sidebarPin : view.getSidebarPins())
         {
-            Path userhome = Paths.get(System.getProperty("user.home"));
-            Path dest = userhome.resolve(sidebarPin.getText());
+            Path home = Paths.get(System.getProperty(Const.USER_HOME));
+            Path dest = home.resolve(sidebarPin.getText());
 
             if(Files.exists(dest))
             {
@@ -489,6 +501,16 @@ public class Controller
                 view.getSideBar().remove(sidebarPin);
             }
         }
+
+        view.getThisPC().addActionListener(e ->
+        {
+            //TODO
+        });
+
+        view.getNetwork().addActionListener(e ->
+        {
+            //TODO
+        });
     }
 
     private void listDirectoryContent()

@@ -10,6 +10,10 @@ public class Const
     public final static String[] COLUMN_NAMES = { "Name", "Date modified", "Type", "Size"};
 
     public final static String DATE_FORMAT = "dd.MM.yyyy HH:mm";
+    /**
+     * User home property
+     */
+    public final static String USER_HOME = "user.home";
 
     // PNGs
     public final static String EXPLORER_ICON = "/icons/256-explorer.png";
