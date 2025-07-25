@@ -268,12 +268,14 @@ public class Controller
                     }
 
                     listDirectoryContent();
+                    ((CellEditor) e.getSource()).removeCellEditorListener(this);
                 }
 
                 @Override
                 public void editingCanceled(ChangeEvent e)
                 {
                     listDirectoryContent();
+                    ((CellEditor) e.getSource()).removeCellEditorListener(this);
                 }
             });
         });
@@ -302,12 +304,14 @@ public class Controller
                     }
 
                     listDirectoryContent();
+                    ((CellEditor) e.getSource()).removeCellEditorListener(this);
                 }
 
                 @Override
                 public void editingCanceled(ChangeEvent e)
                 {
                     listDirectoryContent();
+                    ((CellEditor) e.getSource()).removeCellEditorListener(this);
                 }
             });
         });
@@ -336,12 +340,14 @@ public class Controller
                     }
 
                     listDirectoryContent();
+                    ((CellEditor) e.getSource()).removeCellEditorListener(this);
                 }
 
                 @Override
                 public void editingCanceled(ChangeEvent e)
                 {
                     listDirectoryContent();
+                    ((CellEditor) e.getSource()).removeCellEditorListener(this);
                 }
             });
         });
