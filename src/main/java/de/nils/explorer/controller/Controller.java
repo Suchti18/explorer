@@ -366,22 +366,34 @@ public class Controller
 
         view.getTrashBtn().addActionListener(e ->
         {
-            int row = view.getTable().getSelectionModel().getLeadSelectionIndex();
-            Path src = currPath.resolve(view.getTable().getValueAt(row, 0).toString());
+            int row = view.getTable().getSelectionModel().getMinSelectionIndex();
 
-            try
+            if(row != -1)
             {
-                if(!Files.deleteIfExists(src))
+                int maxRow = view.getTable().getSelectionModel().getMaxSelectionIndex();
+                for(; row <= maxRow; row++)
                 {
-                    createErrorOptionPane("File was not deleted");
-                }
-            }
-            catch (IOException ex)
-            {
-                throw new RuntimeException(ex);
-            }
+                    Path src = currPath.resolve(view.getTable().getValueAt(row, 0).toString());
 
-            listDirectoryContent();
+                    try
+                    {
+                        if(!Files.deleteIfExists(src))
+                        {
+                            createErrorOptionPane("File was not deleted");
+                        }
+                    }
+                    catch (IOException ex)
+                    {
+                        throw new RuntimeException(ex);
+                    }
+                }
+
+                listDirectoryContent();
+            }
+            else
+            {
+                createErrorOptionPane("No file selected");
+            }
         });
 
         alphabeticalAZMenuItem.addActionListener(e ->
