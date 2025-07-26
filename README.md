@@ -19,7 +19,7 @@ Recreation of the Windows 10/11 Explorer for Windows XP
 
 ### Instructions
 1. Download the latest release
-2. Run the explorer executable
+2. Run the explorer executable/jar
 
 ---
 
