@@ -564,7 +564,7 @@ public class Controller
         }
         catch (IOException e)
         {
-            throw new RuntimeException(e);
+            createErrorOptionPane("Error: " + e);
         }
 
         // Update element count
@@ -583,22 +583,45 @@ public class Controller
             {
                 Image img;
                 String type;
+                String fileSize;
                 if(Files.isDirectory(path))
                 {
                     img = folderImg;
                     type = "Directory";
+
+                    // TODO: Calculate folder size (6 depth)
+                    fileSize = "0 Bytes";
                 }
                 else
                 {
                     img = fileImg;
                     type = "File";
+
+                    if(Files.size(path) <= Math.pow(2, 10))
+                    {
+                        fileSize = Files.size(path) + " Bytes";
+                    }
+                    else if(Files.size(path) <= Math.pow(2, 20))
+                    {
+                        fileSize = String.format("%.2f KiB", (Files.size(path) / Math.pow(2, 10)));
+                    }
+                    else if(Files.size(path) <= Math.pow(2, 30))
+                    {
+                        fileSize = String.format("%.2f MiB", (Files.size(path) / Math.pow(2, 20)));
+                    }
+                    else if(Files.size(path) <= Math.pow(2, 40))
+                    {
+                        fileSize = String.format("%.2f GiB", (Files.size(path) / Math.pow(2, 30)));
+                    }
+                    else
+                    {
+                        fileSize = String.format("%.2f TiB", (Files.size(path) / Math.pow(2, 40)));
+                    }
                 }
 
                 String modifiedDate = LocalDateTime.ofInstant(
                         Files.getLastModifiedTime(path).toInstant(),
                         ZonedDateTime.now().getZone()).format(DateTimeFormatter.ofPattern(Const.DATE_FORMAT));
-
-                String fileSize = Files.size(path) + " Bytes";
 
                 Object[] data = {new FileName(img, path.getFileName().toString()), modifiedDate, type, fileSize};
                 ((DefaultTableModel) view.getTable().getModel()).addRow(data);
