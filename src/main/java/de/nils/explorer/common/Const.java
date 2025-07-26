@@ -8,6 +8,8 @@ public class Const
     public final static String EMPTY = "";
 
     public final static String[] COLUMN_NAMES = { "Name", "Date modified", "Type", "Size"};
+    public final static String[] BINARY_PREFIX_UNITS = { "Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
+    public final static String[] SI_UNITS = { "Bytes", "KB", "MB", "GB", "TB", "PB", "EB" };
 
     public final static String DATE_FORMAT = "dd.MM.yyyy HH:mm";
     /**

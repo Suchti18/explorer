@@ -13,8 +13,8 @@ import javax.swing.event.CellEditorListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.datatransfer.StringSelection;
+import java.awt.event.*;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -187,9 +187,12 @@ public class Controller
             @Override
             public void mousePressed(MouseEvent e)
             {
-                previousPath = currPath;
-                currPath = currPath.getParent();
-                listDirectoryContent();
+                if(currPath.getParent() != null)
+                {
+                    previousPath = currPath;
+                    currPath = currPath.getParent();
+                    listDirectoryContent();
+                }
             }
         });
 
@@ -222,7 +225,12 @@ public class Controller
             @Override
             public void mousePressed(MouseEvent e)
             {
-                super.mousePressed(e);
+                if(currPath.getRoot() != null)
+                {
+                    previousPath = currPath;
+                    currPath = currPath.getRoot();
+                    listDirectoryContent();
+                }
             }
         });
 
@@ -237,6 +245,88 @@ public class Controller
             public void mousePressed(MouseEvent e)
             {
                 listDirectoryContent();
+            }
+        });
+
+        // Right click path entering
+        JTextField pathTextField = new JTextField();
+        pathTextField.setBorder(BorderFactory.createEmptyBorder());
+        pathTextField.setOpaque(false);
+        pathTextField.addKeyListener(new KeyAdapter()
+        {
+            @Override
+            public void keyTyped(KeyEvent e)
+            {
+                if(e.getKeyChar() == KeyEvent.VK_ESCAPE)
+                {
+                    view.getPathPanel().transferFocusBackward();
+                }
+                else if(e.getKeyChar() == KeyEvent.VK_ENTER)
+                {
+                    Path enteredPath = Paths.get(pathTextField.getText());
+                    if(Files.exists(enteredPath))
+                    {
+                        currPath = enteredPath;
+                        listDirectoryContent();
+                    }
+                    else
+                    {
+                        createErrorOptionPane("Does not exist");
+                    }
+
+                    view.getPathPanel().transferFocusBackward();
+                }
+                else
+                {
+                    view.getPathPanel().invalidate();
+                    view.getPathPanel().revalidate();
+                }
+            }
+        });
+
+        pathTextField.addFocusListener(new FocusListener()
+        {
+            @Override
+            public void focusGained(FocusEvent e)
+            {}
+
+            @Override
+            public void focusLost(FocusEvent e)
+            {
+                view.getPathPanel().remove(pathTextField);
+                view.getPathLabel().setVisible(true);
+                view.getPathPanel().invalidate();
+                view.getPathPanel().revalidate();
+                view.getPathPanel().repaint();
+            }
+        });
+
+        // Left click popup
+        JPopupMenu pathPopup = new JPopupMenu();
+        JMenuItem copyItem  = new JMenuItem("Copy");
+        copyItem.addActionListener(e ->
+                Toolkit.getDefaultToolkit().getSystemClipboard().setContents(new StringSelection(currPath.toString()), null));
+        pathPopup.add(copyItem);
+
+        view.getPathPanel().addMouseListener(new MouseAdapter()
+        {
+            @Override
+            public void mouseClicked(MouseEvent e)
+            {
+                if(e.getButton() == MouseEvent.BUTTON1)
+                {
+                    pathTextField.setText(Const.EMPTY);
+                    view.getPathLabel().setVisible(false);
+
+                    view.getPathPanel().add(pathTextField);
+                    pathTextField.requestFocusInWindow();
+                    view.getPathPanel().invalidate();
+                    view.getPathPanel().revalidate();
+                }
+                else if(e.getButton() == MouseEvent.BUTTON3)
+                {
+                    pathPopup.show(view.getPathPanel(), e.getX(), e.getY());
+                }
             }
         });
     }
@@ -591,7 +681,7 @@ public class Controller
                     type = "Directory";
 
                     DirectorySizeFileVisitor fileVisitor = new DirectorySizeFileVisitor();
-                    Files.walkFileTree(path, new HashSet<>(), 6, fileVisitor);
+                    Files.walkFileTree(path, new HashSet<>(), 4, fileVisitor);
                     fileSize = getSizeString(fileVisitor.getSizeResult());
                 }
                 else
@@ -622,17 +712,15 @@ public class Controller
 
     private String getSizeString(long size)
     {
-        String[] units = { "Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
-        double tempSize = size;
         int unitIndex = 0;
+        double tempSize = size;
 
-        while (tempSize >= 1024 && unitIndex < units.length - 1)
+        for(; tempSize >= 1024 && unitIndex < Const.BINARY_PREFIX_UNITS.length - 1; unitIndex++)
         {
             tempSize /= 1024;
-            unitIndex++;
         }
 
-        return unitIndex == 0 ? String.format("%d %s", (long) tempSize, units[unitIndex])
-                : String.format("%.2f %s", tempSize, units[unitIndex]);
+        return Math.floor(tempSize) == tempSize ? String.format("%d %s", (long) tempSize, Const.BINARY_PREFIX_UNITS[unitIndex])
+                : String.format("%.2f %s", tempSize, Const.BINARY_PREFIX_UNITS[unitIndex]);
     }
 }

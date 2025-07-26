@@ -24,6 +24,7 @@ public class View
     private final FileTable table;
     private final CounterLabel elementsLabel;
     private final CounterLabel selectedElementsLabel;
+    private final RoundedPanel pathPanel;
 
     // Upper panel
     private final JLabel pathLabel;
@@ -69,7 +70,7 @@ public class View
         refreshBtn = createMenuBtn(Const.REFRESH_SVG, "Refresh");
 
         pathLabel = new JLabel();
-        JPanel pathPanel = new RoundedPanel();
+        pathPanel = new RoundedPanel();
         pathPanel.setBackground(Color.white);
 
         pathPanel.add(pathLabel);
@@ -221,6 +222,11 @@ public class View
     public JLabel getPathLabel()
     {
         return pathLabel;
+    }
+
+    public RoundedPanel getPathPanel()
+    {
+        return pathPanel;
     }
 
     public JButton getBackBtn()
