@@ -449,37 +449,34 @@ public class Controller
 
                     Path dest = Paths.get(btn.getText());
 
-                    btn.addActionListener(ae ->
+                    JPopupMenu popup = new CloseJPopupMenu(btn, MouseEvent.BUTTON3);
+
+                    JMenuItem remove = new JMenuItem("Remove");
+                    remove.addActionListener(ae ->
                     {
-                        if(Files.exists(dest))
-                        {
-                            currPath = dest;
-                            listDirectoryContent();
-                        }
-                        else
-                        {
-                            createErrorOptionPane("Not found: " + dest);
-                        }
+                        view.getSideBar().remove(btn);
+                        view.getSideBar().invalidate();
+                        view.getSideBar().revalidate();
                     });
+
+                    popup.add(remove);
 
                     btn.addMouseListener(new MouseAdapter()
                     {
                         @Override
                         public void mouseClicked(MouseEvent e)
                         {
-                            if(SwingUtilities.isRightMouseButton(e))
+                            if(SwingUtilities.isLeftMouseButton(e))
                             {
-                                JPopupMenu popup = new CloseJPopupMenu(btn, MouseEvent.BUTTON3);
-
-                                JMenuItem remove = new JMenuItem("Remove");
-                                remove.addActionListener(ae ->
+                                if(Files.exists(dest))
                                 {
-                                    view.getSideBar().remove(btn);
-                                    view.getSideBar().invalidate();
-                                    view.getSideBar().revalidate();
-                                });
-
-                                popup.add(remove);
+                                    currPath = dest;
+                                    listDirectoryContent();
+                                }
+                                else
+                                {
+                                    createErrorOptionPane("Not found: " + dest);
+                                }
                             }
                         }
                     });
