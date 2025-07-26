@@ -5,7 +5,6 @@ import de.nils.explorer.view.GuiResources;
 import de.nils.explorer.view.View;
 import de.nils.explorer.view.components.popup.CloseJPopupMenu;
 import de.nils.explorer.view.components.tables.FileName;
-import de.nils.explorer.view.components.tables.FileTableModel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +57,6 @@ public class Controller
 
     public Controller(View view)
     {
-
         folderImg = GuiResources.loadImage(Const.FOLDER_SVG, 16, 16);
         fileImg = GuiResources.loadImage(Const.FILE_SVG, 16, 16);
 
@@ -170,14 +168,7 @@ public class Controller
         {
             int selectedRowCount = view.getTable().getSelectedRows().length;
 
-            if(selectedRowCount > 0)
-            {
-                view.getSelectedElementsLabel().setText(selectedRowCount + " Selected");
-            }
-            else
-            {
-                view.getSelectedElementsLabel().setText("");
-            }
+            view.getSelectedElementsLabel().setAmount(selectedRowCount);
         });
     }
 
@@ -255,7 +246,7 @@ public class Controller
             ((DefaultTableModel) view.getTable().getModel()).addRow(data);
 
             int lastRow = view.getTable().getRowCount() - 1;
-            allowCellEditing(lastRow, new CellEditorListener()
+            view.getTable().allowCellEditing(lastRow, new CellEditorListener()
             {
                 @Override
                 public void editingStopped(ChangeEvent e)
@@ -291,7 +282,7 @@ public class Controller
             ((DefaultTableModel) view.getTable().getModel()).addRow(data);
 
             int lastRow = view.getTable().getRowCount() - 1;
-            allowCellEditing(lastRow, new CellEditorListener()
+            view.getTable().allowCellEditing(lastRow, new CellEditorListener()
             {
                 @Override
                 public void editingStopped(ChangeEvent e)
@@ -332,7 +323,7 @@ public class Controller
 
                 view.getTable().getSelectionModel().clearSelection();
 
-                allowCellEditing(row, new CellEditorListener()
+                view.getTable().allowCellEditing(row, new CellEditorListener()
                 {
                     @Override
                     public void editingStopped(ChangeEvent e)
@@ -510,7 +501,7 @@ public class Controller
         view.getThisPC().addActionListener(e ->
         {
             // Clear table
-            ((DefaultTableModel) view.getTable().getModel()).setRowCount(0);
+            view.getTable().clearTable();
 
             for(File file : File.listRoots())
             {
@@ -529,7 +520,7 @@ public class Controller
         log.trace("Showing contents of: <{}>",  currPath);
 
         // Clear table
-        ((DefaultTableModel) view.getTable().getModel()).setRowCount(0);
+        view.getTable().clearTable();
 
         AtomicInteger count = new AtomicInteger();
 
@@ -558,7 +549,7 @@ public class Controller
         }
 
         // Update element count
-        view.getElementsLabel().setText(count.get() + " Elements");
+        view.getElementsLabel().setAmount(count.get());
         // Update path label
         view.getPathLabel().setText(currPath.toAbsolutePath().normalize().toString());
         // Clear selection to prevent auto-selecting the first row
@@ -598,15 +589,6 @@ public class Controller
                 throw new RuntimeException(e);
             }
         }
-    }
-
-    private void allowCellEditing(int row, CellEditorListener cellEditorListener)
-    {
-        ((FileTableModel) view.getTable().getModel()).setEditableRow(row);
-        view.getTable().editCellAt(row, 0);
-        ((FileTableModel) view.getTable().getModel()).clearEditableRow();
-
-        view.getTable().getCellEditor(row, 0).addCellEditorListener(cellEditorListener);
     }
 
     private void createErrorOptionPane(String text)

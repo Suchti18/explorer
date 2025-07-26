@@ -3,7 +3,7 @@ package de.nils.explorer.view.components;
 import javax.swing.*;
 import java.awt.*;
 
-public class roundedPanel extends JPanel
+public class RoundedPanel extends JPanel
 {
     @Override
     protected void paintComponent(Graphics g)

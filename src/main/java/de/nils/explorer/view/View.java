@@ -1,18 +1,16 @@
 package de.nils.explorer.view;
 
 import de.nils.explorer.common.Const;
-import de.nils.explorer.view.components.roundedPanel;
+import de.nils.explorer.view.components.CounterLabel;
+import de.nils.explorer.view.components.RoundedPanel;
 import de.nils.explorer.view.components.scrollpane.ScrollPaneWin11;
-import de.nils.explorer.view.components.tables.FileNameTableCellEditor;
-import de.nils.explorer.view.components.tables.FileNameTableCellRenderer;
 import de.nils.explorer.view.components.listeners.ListDragListener;
-import de.nils.explorer.view.components.tables.FileTableModel;
+import de.nils.explorer.view.components.tables.FileTable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
-import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -26,9 +24,9 @@ public class View
 {
     private static final Logger log = LoggerFactory.getLogger(View.class);
 
-    private final JTable table;
-    private final JLabel elementsLabel;
-    private final JLabel selectedElementsLabel;
+    private final FileTable table;
+    private final CounterLabel elementsLabel;
+    private final CounterLabel selectedElementsLabel;
 
     // Upper panel
     private final JLabel pathLabel;
@@ -85,7 +83,7 @@ public class View
         refreshBtn = createMenuBtn(Const.REFRESH_SVG, "Refresh");
 
         pathLabel = new JLabel();
-        JPanel pathPanel = new roundedPanel();
+        JPanel pathPanel = new RoundedPanel();
         pathPanel.setBackground(Color.white);
 
         pathPanel.add(pathLabel);
@@ -196,10 +194,10 @@ public class View
         infoPanel.setBackground(Color.white);
         infoPanel.setLayout(new BoxLayout(infoPanel, BoxLayout.LINE_AXIS));
 
-        elementsLabel = new JLabel(Const.EMPTY);
+        elementsLabel = new CounterLabel("Elements");
         elementsLabel.setBorder(new EmptyBorder(2, 5, 2, 0));
 
-        selectedElementsLabel = new JLabel(Const.EMPTY);
+        selectedElementsLabel = new CounterLabel("Selected");
         selectedElementsLabel.setBorder(new EmptyBorder(2, 0, 2, 0));
 
         infoPanel.add(elementsLabel);
@@ -210,16 +208,7 @@ public class View
 
         frame.add(infoPanel, BorderLayout.SOUTH);
 
-        DefaultTableModel tableModel = new FileTableModel(Const.COLUMN_NAMES, 0);
-
-        table = new JTable(tableModel);
-        table.setShowHorizontalLines(false);
-        table.setShowVerticalLines(false);
-        table.getColumnModel().getColumn(0).setCellEditor(new FileNameTableCellEditor());
-        table.getColumnModel().getColumn(0).setCellRenderer(new FileNameTableCellRenderer());
-        table.getTableHeader().setOpaque(false);
-        table.getTableHeader().setBackground(Color.white);
-        table.getTableHeader().setForeground(Color.black);
+        table = new FileTable();
 
         JScrollPane tableScrollPane = new ScrollPaneWin11();
         tableScrollPane.setViewportView(table);
@@ -234,17 +223,17 @@ public class View
         log.debug("View loaded");
     }
 
-    public JTable getTable()
+    public FileTable getTable()
     {
         return table;
     }
 
-    public JLabel getElementsLabel()
+    public CounterLabel getElementsLabel()
     {
         return elementsLabel;
     }
 
-    public JLabel getSelectedElementsLabel()
+    public CounterLabel getSelectedElementsLabel()
     {
         return selectedElementsLabel;
     }
