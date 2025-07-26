@@ -5,6 +5,10 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.util.List;
 
+/**
+ * @see <a href="https://github.com/DJ-Raven/windows11-jscrollbar">Official repo</a>
+ * @author Raven
+ */
 public class PolygonCorner {
 
     public GeneralPath getRoundedGeneralPathFromPoints(List<Point2D> l, float arcSize) {

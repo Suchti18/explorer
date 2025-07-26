@@ -22,7 +22,7 @@ import org.jdesktop.animation.timing.Animator;
 import org.jdesktop.animation.timing.TimingTargetAdapter;
 
 /**
- *
+ * @see <a href="https://github.com/DJ-Raven/windows11-jscrollbar">Official repo</a>
  * @author Raven
  */
 public class ScrollBarWin11UI extends BasicScrollBarUI {
