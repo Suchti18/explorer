@@ -24,6 +24,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;
 
@@ -525,7 +526,7 @@ public class Controller
 
             for(File file : File.listRoots())
             {
-                Object[] data = {new FileName(driveImg, file.toString()), "", "Drive", file.getTotalSpace()};
+                Object[] data = {new FileName(driveImg, file.toString()), "", "Drive", getSizeString(file.getTotalSpace())};
                 ((DefaultTableModel) view.getTable().getModel()).addRow(data);
             }
 
@@ -589,34 +590,15 @@ public class Controller
                     img = folderImg;
                     type = "Directory";
 
-                    // TODO: Calculate folder size (6 depth)
-                    fileSize = "0 Bytes";
+                    DirectorySizeFileVisitor fileVisitor = new DirectorySizeFileVisitor();
+                    Files.walkFileTree(path, new HashSet<>(), 6, fileVisitor);
+                    fileSize = getSizeString(fileVisitor.getSizeResult());
                 }
                 else
                 {
                     img = fileImg;
                     type = "File";
-
-                    if(Files.size(path) <= Math.pow(2, 10))
-                    {
-                        fileSize = Files.size(path) + " Bytes";
-                    }
-                    else if(Files.size(path) <= Math.pow(2, 20))
-                    {
-                        fileSize = String.format("%.2f KiB", (Files.size(path) / Math.pow(2, 10)));
-                    }
-                    else if(Files.size(path) <= Math.pow(2, 30))
-                    {
-                        fileSize = String.format("%.2f MiB", (Files.size(path) / Math.pow(2, 20)));
-                    }
-                    else if(Files.size(path) <= Math.pow(2, 40))
-                    {
-                        fileSize = String.format("%.2f GiB", (Files.size(path) / Math.pow(2, 30)));
-                    }
-                    else
-                    {
-                        fileSize = String.format("%.2f TiB", (Files.size(path) / Math.pow(2, 40)));
-                    }
+                    fileSize = getSizeString(Files.size(path));
                 }
 
                 String modifiedDate = LocalDateTime.ofInstant(
@@ -636,5 +618,21 @@ public class Controller
     private void createErrorOptionPane(String text)
     {
         JOptionPane.showMessageDialog(view.getTable(), text, "Error", JOptionPane.ERROR_MESSAGE);
+    }
+
+    private String getSizeString(long size)
+    {
+        String[] units = { "Bytes", "KiB", "MiB", "GiB", "TiB", "PiB", "EiB" };
+        double tempSize = size;
+        int unitIndex = 0;
+
+        while (tempSize >= 1024 && unitIndex < units.length - 1)
+        {
+            tempSize /= 1024;
+            unitIndex++;
+        }
+
+        return unitIndex == 0 ? String.format("%d %s", (long) tempSize, units[unitIndex])
+                : String.format("%.2f %s", tempSize, units[unitIndex]);
     }
 }
