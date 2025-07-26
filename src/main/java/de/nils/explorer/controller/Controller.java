@@ -610,6 +610,9 @@ public class Controller
             }
         }
 
+        view.getSideBar().invalidate();
+        view.getSideBar().revalidate();
+
         view.getThisPC().addActionListener(e ->
         {
             view.getTable().clearTable();
