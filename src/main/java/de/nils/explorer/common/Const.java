@@ -47,4 +47,5 @@ public class Const
     public final static String INVERT_SVG = "/images/invert.svg";
     public final static String ADD_SVG = "/images/add.svg";
     public final static String PIN_SVG = "/images/pin.svg";
+    public final static String DRIVE_SVG = "/images/drive.svg";
 }

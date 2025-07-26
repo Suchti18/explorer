@@ -33,6 +33,7 @@ public class Controller
 
     private final Image folderImg;
     private final Image fileImg;
+    private final Image driveImg;
 
     private final View view;
     private Path currPath;
@@ -59,6 +60,7 @@ public class Controller
     {
         folderImg = GuiResources.loadImage(Const.FOLDER_SVG, 16, 16);
         fileImg = GuiResources.loadImage(Const.FILE_SVG, 16, 16);
+        driveImg = GuiResources.loadImage(Const.DRIVE_SVG, 16, 16);
 
         this.view = view;
         currPath = Paths.get(".").toAbsolutePath().normalize();
@@ -505,7 +507,7 @@ public class Controller
 
             for(File file : File.listRoots())
             {
-                Object[] data = {new FileName(fileImg, file.toString()), "", "Drive", file.getTotalSpace()};
+                Object[] data = {new FileName(driveImg, file.toString()), "", "Drive", file.getTotalSpace()};
                 ((DefaultTableModel) view.getTable().getModel()).addRow(data);
             }
 
