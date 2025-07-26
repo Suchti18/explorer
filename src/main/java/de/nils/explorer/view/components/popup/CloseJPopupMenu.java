@@ -3,12 +3,19 @@ package de.nils.explorer.view.components.popup;
 import javax.swing.*;
 import javax.swing.event.PopupMenuEvent;
 import javax.swing.event.PopupMenuListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 
 public class CloseJPopupMenu extends JPopupMenu
 {
     private boolean isMenuOpen;
 
     public CloseJPopupMenu(JButton btn)
+    {
+        this(btn, MouseEvent.BUTTON1);
+    }
+
+    public CloseJPopupMenu(JButton btn, int mouseBtn)
     {
         addPopupMenuListener(new PopupMenuListener()
         {
@@ -31,11 +38,18 @@ public class CloseJPopupMenu extends JPopupMenu
             }
         });
 
-        btn.addActionListener(e ->
+        btn.addMouseListener(new MouseAdapter()
         {
-            if(!isMenuOpen)
+            @Override
+            public void mouseClicked(MouseEvent e)
             {
-                show(btn, 0, btn.getHeight());
+                if(e.getButton() == mouseBtn)
+                {
+                    if(!isMenuOpen)
+                    {
+                        show(btn, 0, btn.getHeight());
+                    }
+                }
             }
         });
     }

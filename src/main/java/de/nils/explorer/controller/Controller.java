@@ -451,7 +451,7 @@ public class Controller
 
                     btn.addActionListener(ae ->
                     {
-                        if (Files.exists(dest))
+                        if(Files.exists(dest))
                         {
                             currPath = dest;
                             listDirectoryContent();
@@ -459,6 +459,28 @@ public class Controller
                         else
                         {
                             createErrorOptionPane("Not found: " + dest);
+                        }
+                    });
+
+                    btn.addMouseListener(new MouseAdapter()
+                    {
+                        @Override
+                        public void mouseClicked(MouseEvent e)
+                        {
+                            if(SwingUtilities.isRightMouseButton(e))
+                            {
+                                JPopupMenu popup = new CloseJPopupMenu(btn, MouseEvent.BUTTON3);
+
+                                JMenuItem remove = new JMenuItem("Remove");
+                                remove.addActionListener(ae ->
+                                {
+                                    view.getSideBar().remove(btn);
+                                    view.getSideBar().invalidate();
+                                    view.getSideBar().revalidate();
+                                });
+
+                                popup.add(remove);
+                            }
                         }
                     });
 
@@ -502,7 +524,6 @@ public class Controller
 
         view.getThisPC().addActionListener(e ->
         {
-            // Clear table
             view.getTable().clearTable();
 
             for(File file : File.listRoots())
@@ -521,7 +542,6 @@ public class Controller
     {
         log.trace("Showing contents of: <{}>",  currPath);
 
-        // Clear table
         view.getTable().clearTable();
 
         AtomicInteger count = new AtomicInteger();

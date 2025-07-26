@@ -74,9 +74,7 @@ public class View
 
         pathPanel.add(pathLabel);
 
-        JScrollPane pathScrollPane = new ScrollPaneWin11();
-        pathScrollPane.setBorder(BorderFactory.createEmptyBorder());
-        pathScrollPane.setViewportView(pathPanel);
+        JScrollPane pathScrollPane = new ScrollPaneWin11(pathPanel);
 
         upperPanel.add(backBtn);
         upperPanel.add(Box.createHorizontalStrut(10));
@@ -159,11 +157,9 @@ public class View
         sideBar.add(network);
         sideBar.add(Box.createVerticalGlue());
 
-        JScrollPane list = new ScrollPaneWin11();
-        list.setViewportView(sideBar);
+        JScrollPane list = new ScrollPaneWin11(sideBar);
         list.getVerticalScrollBar().setUnitIncrement(16);
         list.setPreferredSize(new Dimension(175, 100));
-        list.setBorder(BorderFactory.createEmptyBorder());
 
         JSeparator sideBarSeparator = createSeparator(JSeparator.VERTICAL, 0, 0);
 
@@ -196,9 +192,7 @@ public class View
 
         table = new FileTable();
 
-        JScrollPane tableScrollPane = new ScrollPaneWin11();
-        tableScrollPane.setViewportView(table);
-        tableScrollPane.setBorder(BorderFactory.createEmptyBorder());
+        JScrollPane tableScrollPane = new ScrollPaneWin11(table);
 
         frame.add(tableScrollPane, BorderLayout.CENTER);
 

@@ -1,9 +1,6 @@
 package de.nils.explorer.view.components.scrollpane;
 
-import java.awt.Container;
-import java.awt.EventQueue;
-import java.awt.Insets;
-import java.awt.Rectangle;
+import java.awt.*;
 import java.util.Objects;
 import javax.swing.*;
 
@@ -13,11 +10,13 @@ import javax.swing.*;
  */
 public class ScrollPaneWin11 extends JScrollPane {
 
-    public ScrollPaneWin11()
+    public ScrollPaneWin11(Component view)
     {
+        setViewportView(view);
         getVerticalScrollBar().setUI(new ScrollBarWin11UI());
         getHorizontalScrollBar().setUI(new ScrollBarWin11UI());
         setLayout(new ScrollLayout());
+        setBorder(BorderFactory.createEmptyBorder());
     }
 
     @Override
