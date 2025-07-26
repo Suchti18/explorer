@@ -356,15 +356,15 @@ public class Controller
                         throw new RuntimeException(ex);
                     }
 
-                    listDirectoryContent();
                     ((CellEditor) e.getSource()).removeCellEditorListener(this);
+                    listDirectoryContent();
                 }
 
                 @Override
                 public void editingCanceled(ChangeEvent e)
                 {
-                    listDirectoryContent();
                     ((CellEditor) e.getSource()).removeCellEditorListener(this);
+                    listDirectoryContent();
                 }
             });
         });
@@ -392,15 +392,15 @@ public class Controller
                         throw new RuntimeException(ex);
                     }
 
-                    listDirectoryContent();
                     ((CellEditor) e.getSource()).removeCellEditorListener(this);
+                    listDirectoryContent();
                 }
 
                 @Override
                 public void editingCanceled(ChangeEvent e)
                 {
-                    listDirectoryContent();
                     ((CellEditor) e.getSource()).removeCellEditorListener(this);
+                    listDirectoryContent();
                 }
             });
         });
@@ -431,15 +431,15 @@ public class Controller
                             createErrorOptionPane("File was not renamed");
                         }
 
-                        listDirectoryContent();
                         ((CellEditor) e.getSource()).removeCellEditorListener(this);
+                        listDirectoryContent();
                     }
 
                     @Override
                     public void editingCanceled(ChangeEvent e)
                     {
-                        listDirectoryContent();
                         ((CellEditor) e.getSource()).removeCellEditorListener(this);
+                        listDirectoryContent();
                     }
                 });
             }
@@ -691,6 +691,7 @@ public class Controller
     {
         log.trace("Showing contents of: <{}>",  currPath);
 
+        view.getTable().endCellEditing();
         view.getTable().clearTable();
 
         AtomicInteger count = new AtomicInteger();

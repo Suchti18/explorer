@@ -5,6 +5,7 @@ import de.nils.explorer.common.Const;
 import javax.swing.*;
 import javax.swing.event.CellEditorListener;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableCellEditor;
 import java.awt.*;
 
 public class FileTable extends JTable
@@ -34,5 +35,17 @@ public class FileTable extends JTable
         ((FileTableModel) getModel()).clearEditableRow();
 
         getCellEditor(row, 0).addCellEditorListener(cellEditorListener);
+    }
+
+    public void endCellEditing()
+    {
+        if(isEditing())
+        {
+            TableCellEditor editor = getCellEditor();
+            if(!editor.stopCellEditing())
+            {
+                editor.cancelCellEditing();
+            }
+        }
     }
 }
