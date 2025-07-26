@@ -14,11 +14,8 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class View
 {
@@ -54,20 +51,9 @@ public class View
         sidebarPins = new ArrayList<>();
         JFrame frame = new JFrame(Const.WINDOW_TITLE);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        try
-        {
-            frame.setIconImage(
-                    new ImageIcon(
-                            Objects.requireNonNull(
-                                    getClass().getResource(Const.EXPLORER_ICON)).toURI().toURL()).getImage());
-        }
-        catch (URISyntaxException | MalformedURLException e)
-        {
-            throw new RuntimeException(e);
-        }
-
+        frame.setIconImage(GuiResources.loadImage(Const.EXPLORER_ICON, 256, 256));
         frame.setLayout(new BorderLayout());
+        addTrayIcon();
 
         JPanel mainPanel = new JPanel();
         mainPanel.setLayout(new BoxLayout(mainPanel, BoxLayout.PAGE_AXIS));
@@ -380,5 +366,40 @@ public class View
         separator.setForeground(Color.black);
 
         return separator;
+    }
+
+    private void addTrayIcon()
+    {
+        try
+        {
+            // Ensure awt toolkit is initialized.
+            java.awt.Toolkit.getDefaultToolkit();
+
+            // App requires system tray support, just exit if there is no support.
+            if (!SystemTray.isSupported())
+            {
+                log.error("No system tray support, application exiting.");
+                return;
+            }
+
+            SystemTray tray = SystemTray.getSystemTray();
+            Image image = GuiResources.loadImage(Const.EXPLORER_ICON, 256, 256);
+            TrayIcon trayIcon = new TrayIcon(image);
+
+            PopupMenu popup = new PopupMenu();
+
+            MenuItem exitItem = new MenuItem("Exit");
+            exitItem.addActionListener(e -> System.exit(0));
+
+            popup.add(exitItem);
+            trayIcon.setPopupMenu(popup);
+            trayIcon.setImageAutoSize(true);
+
+            tray.add(trayIcon);
+        }
+        catch (AWTException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }
