@@ -645,35 +645,39 @@ public class Controller
                         pass = JOptionPane.showInputDialog("Enter the password for this drive");
                     }
 
-                    try
+                    if(user != null && pass != null)
                     {
-                        if(user != null && pass != null)
+                        String command = String.format("net use %s /user:%s %s", uncPathString, user, pass);
+                        log.debug("Running <{}>", command);
+
+                        try
                         {
-                            String command = String.format("net use %s /user:%s %s", uncPathString, user, pass);
-                            log.debug("Running <{}>", command);
                             Runtime.getRuntime().exec(command).waitFor();
                         }
-
-                        if(Files.exists(uncPath))
+                        catch (InterruptedException | IOException ex)
                         {
-                            log.debug("Connected to UNC: <{}>",  uncPath);
-                            previousPath = currPath;
-                            currPath = uncPath;
-                            listDirectoryContent();
-                        }
-                        else
-                        {
-                            createErrorOptionPane("Not found. Try again and make sure that you have entered everything correctly");
+                            throw new RuntimeException(ex);
                         }
                     }
-                    catch (IOException | InterruptedException ex)
+
+                    if(Files.exists(uncPath))
                     {
-                        throw new RuntimeException(ex);
+                        log.debug("Connected to UNC: <{}>",  uncPath);
+                        previousPath = currPath;
+                        currPath = uncPath;
+                        listDirectoryContent();
+                    }
+                    else
+                    {
+                        createErrorOptionPane("Not found. Try again and make sure that you have entered everything correctly");
                     }
                 }
                 else
                 {
-                    createErrorOptionPane("UNC Path not found");
+                    if(uncPathString != null)
+                    {
+                        createErrorOptionPane("Invalid UNC Path");
+                    }
                 }
             }
             else
