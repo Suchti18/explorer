@@ -623,7 +623,61 @@ public class Controller
             currPath = Paths.get("");
         });
 
-        view.getNetwork().addActionListener(e -> createErrorOptionPane("Work in progress"));
+        view.getNetwork().addActionListener(e ->
+        {
+            if(System.getProperty("os.name").startsWith("Windows"))
+            {
+                String uncPathString = JOptionPane.showInputDialog("Enter an UNC Path (\\\\Server\\Path\\to\\Drive)");
+
+                if(uncPathString != null && uncPathString.startsWith("\\\\"))
+                {
+                    log.debug("");
+                    Path uncPath = Paths.get(uncPathString);
+
+                    String user = null;
+                    String pass = null;
+                    if(!Files.exists(uncPath))
+                    {
+                        user = JOptionPane.showInputDialog("Enter the user for this drive");
+                        pass = JOptionPane.showInputDialog("Enter the password for this drive");
+                    }
+
+                    try
+                    {
+                        if(user != null && pass != null)
+                        {
+                            String command = String.format("net use %s /user:%s %s", uncPathString, user, pass);
+                            log.debug("Running <{}>", command);
+                            Runtime.getRuntime().exec(command).waitFor();
+                        }
+
+                        if(Files.exists(uncPath))
+                        {
+                            log.debug("Connected to UNC: <{}>",  uncPath);
+                            previousPath = currPath;
+                            currPath = uncPath;
+                            listDirectoryContent();
+                        }
+                        else
+                        {
+                            createErrorOptionPane("Not found. Try again and make sure that you have entered everything correctly");
+                        }
+                    }
+                    catch (IOException | InterruptedException ex)
+                    {
+                        throw new RuntimeException(ex);
+                    }
+                }
+                else
+                {
+                    createErrorOptionPane("UNC Path not found");
+                }
+            }
+            else
+            {
+                createErrorOptionPane("Only supported on windows (Im sorry)");
+            }
+        });
     }
 
     private void listDirectoryContent()
